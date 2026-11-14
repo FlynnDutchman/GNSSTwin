@@ -170,12 +170,15 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
 
     // ---------- bangunan LOD1 (footprint OpenStreetMap diekstrusi setinggi bangunan)
     // dimuat setelah jembatan tampil (tidak menghambat pembukaan), format ringkas delta 1e-6°
-    const muatLod1 = () => fetch("./data/bangunan_lod1.json").then((r) => (r.ok ? r.json() : null)).then((d) => {
+    const muatLod1 = () => fetch(`./data/bangunan_lod1.json?v=${__VERSI__}`).then((r) => (r.ok ? r.json() : null)).then((d) => {
       if (!d || viewer.isDestroyed()) return;
       const [x0, y0] = d.asal || [0, 0], inst = [];
+      // terima format ringkas (b: delta 1e-6°) maupun format lama (bangunan: {h, p:[lon,lat,…]})
+      const daftar = d.b ?? (d.bangunan || []).map((o) => { const v = [Math.round(o.h * 10)]; let px = 0, py = 0;
+        for (let i = 0; i < o.p.length; i += 2) { const x = Math.round((o.p[i] - x0) * 1e6), y = Math.round((o.p[i + 1] - y0) * 1e6); v.push(x - px, y - py); px = x; py = y; } return v; });
       const warna = [Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.fromCssColorString("#DCE3EA")),
                      Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.fromCssColorString("#C9D3DE"))];
-      for (const v of d.b) {
+      for (const v of daftar) {
         const h = v[0] / 10, deg = []; let x = 0, y = 0;
         for (let i = 1; i < v.length; i += 2) { x += v[i]; y += v[i + 1]; deg.push(x0 + x * 1e-6, y0 + y * 1e-6); }
         inst.push(new Cesium.GeometryInstance({

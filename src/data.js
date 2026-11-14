@@ -4,9 +4,9 @@
 export async function loadAll() {
   const base = "./data/";
   const [aset, stasiun, skenario] = await Promise.all([
-    fetch(base + "aset_kretek1.json").then((r) => r.json()),
-    fetch(base + "stasiun.json").then((r) => r.json()),
-    fetch(base + "skenario_opak_contoh.json").then((r) => r.json()),
+    fetch(base + "aset_kretek1.json?v=" + __VERSI__).then((r) => r.json()),
+    fetch(base + "stasiun.json?v=" + __VERSI__).then((r) => r.json()),
+    fetch(base + "skenario_opak_contoh.json?v=" + __VERSI__).then((r) => r.json()),
   ]);
   return { aset, stasiun, skenario };
 }

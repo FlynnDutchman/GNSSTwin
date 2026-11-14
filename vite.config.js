@@ -8,7 +8,10 @@ const cesiumBaseUrl = "cesiumStatic";
 
 export default defineConfig({
   base: "./",
-  define: { CESIUM_BASE_URL: JSON.stringify(`./${cesiumBaseUrl}`) },
+  define: {
+    CESIUM_BASE_URL: JSON.stringify(`./${cesiumBaseUrl}`),
+    __VERSI__: JSON.stringify(Date.now().toString(36)),   // penanda versi data agar cache browser tidak tercampur
+  },
   plugins: [
     react(),
     viteStaticCopy({

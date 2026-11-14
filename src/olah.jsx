@@ -48,9 +48,9 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
   useEffect(() => {
     if (!dimuat) return;                    // data panel baru diambil saat menu Data GNSS dibuka
     cariServer().then(setServer);
-    fetch("./data/uji_deteksi.json").then((r) => (r.ok ? r.json() : null)).then(setDeteksi).catch(() => {});
-    fetch("./data/uji_integritas.json").then((r) => (r.ok ? r.json() : null)).then(setUji).catch(() => {});
-    fetch("./data/olahan_cpts_296.json").then((r) => r.json()).then((h) => { setHasil((x) => x ?? h); setContoh(true); }).catch(() => {});
+    fetch("./data/uji_deteksi.json?v=" + __VERSI__).then((r) => (r.ok ? r.json() : null)).then(setDeteksi).catch(() => {});
+    fetch("./data/uji_integritas.json?v=" + __VERSI__).then((r) => (r.ok ? r.json() : null)).then(setUji).catch(() => {});
+    fetch("./data/olahan_cpts_296.json?v=" + __VERSI__).then((r) => r.json()).then((h) => { setHasil((x) => x ?? h); setContoh(true); }).catch(() => {});
   }, [dimuat]);
 
   async function tambah(list) {

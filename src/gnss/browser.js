@@ -34,7 +34,7 @@ async function bacaBerkas(f) {
 }
 
 let STASIUN = null;
-async function stasiun() { return STASIUN ??= await (await fetch("./data/stasiun_resmi.json")).json(); }
+async function stasiun() { return STASIUN ??= await (await fetch("./data/stasiun_resmi.json?v=" + __VERSI__)).json(); }
 
 /** Membaca daftar File → info header (dipakai panel sebelum mengolah). */
 export async function periksaBerkas(files) {
