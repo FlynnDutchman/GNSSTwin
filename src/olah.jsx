@@ -151,7 +151,7 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
               <span className="r">{f.header.tipe === "O"
                 ? <>{f.header.marker}{f.dikenal ? " ✓" : ""} · {f.header.antena}<small>tinggi header {fmt(f.header.tinggi, 3)} m{f.header.interval ? ` · ${f.header.interval} dtk` : ""}</small></>
                 : <small>{f.header.sistem === "M" ? "gabungan GPS+GLONASS+Galileo+BeiDou" : f.header.tipe === "G" ? "GLONASS" : "GPS"}</small>}</span>
-              <button className="hapus-f" aria-label={`Hapus ${f.nama}`} title="Hapus file" disabled={!!proses} onClick={() => hapusBerkas(f.nama)}>×</button>
+              <button className="hapus-f" aria-label={`Hapus ${f.nama}`} title="Hapus file" disabled={!!proses} onClick={() => hapusBerkas(f.nama)}><svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button>
             </div>
           ))}
         </div>
