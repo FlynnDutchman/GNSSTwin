@@ -211,7 +211,7 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
         Cesium.Cartesian3.lerp(cur, tg, Math.min(1, dt * 4), cur);
         // offset lokal = urai + getaran lateral/vertikal
         const [ux, uy, uz] = uraiOffset(k.id);
-        const a = m.shaking ? (m.amp[k.id] || 0) : 0, ph = idx * 0.7;
+        const a = m.shaking ? (m.amp[k.id] || 0) : 0, ph = 0;   // fase sama → bergerak sebagai satu benda
         tmpL.x = ux * u + a * Math.sin(2 * Math.PI * F_GETAR * ts + ph);
         tmpL.y = uy * u + a * 0.25 * Math.sin(2 * Math.PI * 1.1 * ts + ph * 1.3);
         tmpL.z = uz * u + a * 0.35 * Math.sin(2 * Math.PI * 3.1 * ts + ph);
@@ -275,12 +275,11 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
       const i = URUT.indexOf(id); const n = [URUT[i - 1], URUT[i + 1]].map((x) => acc[x]).filter((x) => x != null);
       return n.length ? (0.6 * n.reduce((p, q) => p + q, 0)) / n.length : 0;
     };
+    const ampSatu = Math.max(0, ...Object.values(acc)) * EXAG_GETAR * 0.5;
     for (const k of data.aset.komponen) {
-      m.amp[k.id] = (acc[k.id] ?? near(k.id)) * EXAG_GETAR;
-      const g = st.sensors.find((s) => s.komponen === k.id && s.jenis === "GNSS");
-      m.target[k.id] = gempa && g?.nilai?.dE != null
-        ? new Cesium.Cartesian3((g.nilai.dE / 100) * EXAG_GESER, (g.nilai.dN / 100) * EXAG_GESER, (g.nilai.dU / 100) * EXAG_GESER)
-        : Cesium.Cartesian3.ZERO;
+      // satu kesatuan: seluruh jembatan bergetar bersama (amplitudo terbesar), tidak ada komponen yang terpisah
+      m.amp[k.id] = ampSatu;
+      m.target[k.id] = Cesium.Cartesian3.ZERO;   // tanpa pergeseran visual antar-komponen
     }
   }, [st, urai, mode, playing, data]);
 

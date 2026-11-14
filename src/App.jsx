@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { lazy, Suspense } from "react";
-import { EXAG_GESER } from "./konstanta.js";
 // CesiumJS (±1,1 MB gzip) dimuat terpisah: panel & data tampil dulu, peta 3D menyusul
 const mapImport = import("./MapView.jsx");          // mulai unduh segera, paralel dengan data
 const MapView = lazy(() => mapImport);
@@ -34,7 +33,7 @@ function Shell({ data }) {
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState(1);
   const [selected, setSelected] = useState(null);
-  const [urai, setUrai] = useState(false);
+  const urai = false;   // jembatan selalu tampil utuh; dampak ditunjukkan dengan warna komponen
   const [layers, setLayers] = useState({ Sensor: true, InaCORS: false, "Bangunan LOD1": true });
   const [basemap, setBasemap] = useState("ortho");
   const [dim, setDim] = useState("3d");
@@ -137,7 +136,6 @@ function Shell({ data }) {
             {["2d", "3d"].map((d) => <button key={d} className={dim === d ? "on" : ""} onClick={() => { setDim(d); if (view === "inacors") setView("peta"); }}>{d.toUpperCase()}</button>)}
           </div>
           {Object.keys(layers).map((k) => <Chip key={k} active={layers[k]} onClick={() => setLayers((l) => ({ ...l, [k]: !l[k] }))}>{k}</Chip>)}
-          <Chip active={urai} onClick={() => setUrai((u) => !u)}>Urai komponen</Chip>
         </div>
 
         <div className={`tools ${danger ? "low" : ""}`}>
@@ -177,7 +175,7 @@ function Shell({ data }) {
         <div className="legend">
           <b>Status</b>
           <span><i className="aman" />Aman</span><span><i className="waspada" />Waspada</span><span><i className="bahaya" />Bahaya</span>
-          {mode === "gempa" && <small className="exag">Visual dibesarkan: pergeseran ×{EXAG_GESER} dan getaran diperbesar agar terlihat. Angka di panel tetap nilai asli.</small>}
+          {mode === "gempa" && <small className="exag">Jembatan tetap utuh: dampak tiap komponen ditunjukkan dengan warna (aman / waspada / bahaya). Getaran diperbesar agar terlihat; angka di panel nilai asli.</small>}
           <small>{BASEMAPS[basemap].credit} · Bangunan © OpenStreetMap · Natural Earth · CesiumJS</small>
         </div>
 
