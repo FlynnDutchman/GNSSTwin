@@ -277,29 +277,53 @@ function Koordinat({ h }) {
 /** Pergerakan E/N/U terhadap koordinat awal sepanjang waktu akuisisi RINEX (gaya grafik sensor) */
 function Gerak({ h }) {
   const [k, setK] = useState("de");
-  const y = h[k].map((v) => v / 10), fix = y.filter((_, i) => h.q[i] === 1);
+  const n = h.t.length;
+  // diputar seperti grafik sensor: garis tumbuh epoch demi epoch, ±40 dtk untuk data 24 jam lalu berulang
+  const [i, setI] = useState(0);
+  const [main, setMain] = useState(true);
+  useEffect(() => { setI(0); setMain(true); }, [h]);
+  useEffect(() => {
+    if (!main) return;
+    const lang = Math.max(1, Math.round(n / 650));
+    const id = setInterval(() => setI((x) => (x + lang >= n ? 0 : x + lang)), 60);
+    return () => clearInterval(id);
+  }, [main, n]);
+  const y = h[k].map((v) => v / 10), fix = y.filter((_, j) => h.q[j] === 1);
   const s = [...(fix.length ? fix : y)].sort((a, b) => a - b);
   let lo = Math.min(-1, s[Math.floor(s.length * 0.005)]), hi = Math.max(1, s[Math.floor(s.length * 0.995)]);
   const pad = (hi - lo) * 0.12; lo -= pad; hi += pad;
-  const W = 368, H = 190, L = 36, Rr = 10, T = 12, B = 26, tN = h.t[h.t.length - 1] || 1;
+  const W = 368, H = 190, L = 36, Rr = 10, T = 12, B = 26, tN = h.t[n - 1] || 1;
   const X = (t) => L + (t / tN) * (W - L - Rr), Y = (v) => T + (1 - (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * (H - T - B);
   let fx = "", fl = "";
-  for (let i = 0; i < y.length; i++) { const p = `M${X(h.t[i]).toFixed(1)} ${Y(y[i]).toFixed(1)}h0`; if (h.q[i] === 1) fx += p; else fl += p; }
+  for (let j = 0; j <= i && j < n; j++) { const p = `M${X(h.t[j]).toFixed(1)} ${Y(y[j]).toFixed(1)}h0`; if (h.q[j] === 1) fx += p; else fl += p; }
   const tk = [lo + pad, 0, hi - pad], jT = [0, 0.25, 0.5, 0.75, 1].map((f) => h.t.findIndex((t) => t >= f * tN));
+  const tanda = (v) => (v > 0 ? "+" : "") + fmt(v / 10, 1);
   return (
     <>
       <div className="label">PERGERAKAN TERHADAP KOORDINAT AWAL</div>
       <div className="chips">{[["de", "Timur (E)"], ["dn", "Utara (N)"], ["du", "Tinggi (U)"]].map(([c, l]) => <Chip key={c} active={k === c} onClick={() => setK(c)}>{l}</Chip>)}</div>
       <div className="card flat">
         <svg viewBox={`0 0 ${W} ${H}`} className="chart" role="img" aria-label="Grafik pergerakan">
-          {tk.map((v, i) => <g key={i}><line x1={L} x2={W - Rr} y1={Y(v)} y2={Y(v)} className="grid" /><text x={4} y={Y(v) + 4} className="ax">{fmt(v)}</text></g>)}
+          {tk.map((v, j) => <g key={j}><line x1={L} x2={W - Rr} y1={Y(v)} y2={Y(v)} className="grid" /><text x={4} y={Y(v) + 4} className="ax">{fmt(v)}</text></g>)}
           <path d={fl} stroke="#B9C1CC" strokeWidth="2" strokeLinecap="round" />
           <path d={fx} stroke="#1479BB" strokeWidth="2" strokeLinecap="round" />
-          {jT.map((i, j) => i >= 0 && <text key={j} x={X(h.t[i])} y={H - 6} className="ax" textAnchor={j === 0 ? "start" : j === 4 ? "end" : "middle"}>{jamGPST(h, i).slice(0, 5)}</text>)}
+          <line x1={X(h.t[i])} x2={X(h.t[i])} y1={T} y2={H - B} className="t0" />
+          <circle cx={X(h.t[i])} cy={Y(y[i])} r="4.5" fill={h.q[i] === 1 ? "#1479BB" : "#9AA3B2"} stroke="#fff" strokeWidth="2" />
+          {jT.map((ix, j) => ix >= 0 && <text key={j} x={X(h.t[ix])} y={H - 6} className="ax" textAnchor={j === 0 ? "start" : j === 4 ? "end" : "middle"}>{jamGPST(h, ix).slice(0, 5)}</text>)}
           <text x={W - Rr} y={T + 2} className="ax" textAnchor="end">cm</text>
         </svg>
+        <div className="gerak-ctl">
+          <button className="play kecil" aria-label={main ? "Jeda" : "Putar"} onClick={() => setMain((x) => !x)}><Icon name={main ? "pause" : "play"} size={14} /></button>
+          <input type="range" min={0} max={n - 1} value={i} aria-label="Waktu" onChange={(e) => { setI(+e.target.value); setMain(false); }} />
+          <span className="mono">{jamGPST(h, i)}</span>
+        </div>
       </div>
-      <p className="muted small">Waktu mengikuti akuisisi RINEX ({jamGPST(h, 0).slice(0, 5)}–{jamGPST(h, h.t.length - 1).slice(0, 5)} GPST). Biru = fix, abu-abu = float.</p>
+      <div className="table">
+        <div className="tr th"><span>POSISI PADA {jamGPST(h, i)} GPST</span><span>{h.q[i] === 1 ? "FIX" : "FLOAT"}</span></div>
+        <div className="tr"><span>ΔE · ΔN · ΔU</span><span className="mono">{tanda(h.de[i])} · {tanda(h.dn[i])} · {tanda(h.du[i])} cm</span></div>
+        {h.E && <div className="tr"><span>X · Y · Z (m)</span><span className="mono">{m3(h.E[i])} · {m3(h.N[i])} · {m3(h.h[i])}</span></div>}
+      </div>
+      <p className="muted small">Waktu mengikuti akuisisi RINEX ({jamGPST(h, 0).slice(0, 5)}–{jamGPST(h, n - 1).slice(0, 5)} GPST), diputar ±40 detik per hari lalu berulang. Geser slider untuk melihat waktu tertentu. Biru = fix, abu-abu = float.</p>
     </>
   );
 }
