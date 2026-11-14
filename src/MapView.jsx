@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  Axis, BillboardGraphics, BoundingSphere, CallbackPositionProperty, Cartesian2, Cartesian3, Cartographic, Color, ColorBlendMode, ColorGeometryInstanceAttribute, EllipsoidTerrainProvider, GeometryInstance, HeadingPitchRange, HeadingPitchRoll, HorizontalOrigin, ImageryLayer, Ion, Math as CesiumMath, Matrix3, Matrix4, Model, PerInstanceColorAppearance, PolygonGeometry, PolygonHierarchy, Primitive, Rectangle, ScreenSpaceEventHandler, ScreenSpaceEventType, SingleTileImageryProvider, TileMapServiceImageryProvider, Transforms, UrlTemplateImageryProvider, VerticalOrigin, CesiumWidget, buildModuleUrl,
+  Axis, BillboardGraphics, BoundingSphere, CallbackPositionProperty, Cartesian2, Cartesian3, Cartographic, Color, ColorBlendMode, ColorGeometryInstanceAttribute, EllipsoidTerrainProvider, GeometryInstance, HeadingPitchRange, HeadingPitchRoll, HorizontalOrigin, ImageryLayer, Ion, Math as CesiumMath, Matrix3, Matrix4, Model, PerInstanceColorAppearance, PolygonGeometry, PolygonHierarchy, Primitive, Rectangle, ScreenSpaceEventHandler, ScreenSpaceEventType, SingleTileImageryProvider, TileMapServiceImageryProvider, Transforms, UrlTemplateImageryProvider, VerticalOrigin, CesiumWidget, PolylineDashMaterialProperty, PolylineGraphics, buildModuleUrl,
 } from "@cesium/engine";
 import { EXAG_GESER } from "./konstanta.js";
 export { EXAG_GESER };
-const Cesium = { Axis, BillboardGraphics, BoundingSphere, CallbackPositionProperty, Cartesian2, Cartesian3, Cartographic, Color, ColorBlendMode, ColorGeometryInstanceAttribute, EllipsoidTerrainProvider, GeometryInstance, HeadingPitchRange, HeadingPitchRoll, HorizontalOrigin, ImageryLayer, Ion, Math: CesiumMath, Matrix3, Matrix4, Model, PerInstanceColorAppearance, PolygonGeometry, PolygonHierarchy, Primitive, Rectangle, ScreenSpaceEventHandler, ScreenSpaceEventType, SingleTileImageryProvider, TileMapServiceImageryProvider, Transforms, UrlTemplateImageryProvider, VerticalOrigin, CesiumWidget, buildModuleUrl };
+const Cesium = { Axis, BillboardGraphics, BoundingSphere, CallbackPositionProperty, Cartesian2, Cartesian3, Cartographic, Color, ColorBlendMode, ColorGeometryInstanceAttribute, EllipsoidTerrainProvider, GeometryInstance, HeadingPitchRange, HeadingPitchRoll, HorizontalOrigin, ImageryLayer, Ion, Math: CesiumMath, Matrix3, Matrix4, Model, PerInstanceColorAppearance, PolygonGeometry, PolygonHierarchy, Primitive, Rectangle, ScreenSpaceEventHandler, ScreenSpaceEventType, SingleTileImageryProvider, TileMapServiceImageryProvider, Transforms, UrlTemplateImageryProvider, VerticalOrigin, CesiumWidget, PolylineDashMaterialProperty, PolylineGraphics, buildModuleUrl };
 import { BASEMAPS } from "./basemaps.js";
 
 const STATUS_COLOR = { aman: "#1E8A5A", waspada: "#E0A100", bahaya: "#C8323A" };
@@ -25,6 +25,8 @@ function uraiOffset(id) {
 
 // ---------- ikon pin (canvas resolusi 3×, ukuran tampil pas = tajam)
 const GLYPH = {
+  // episenter: titik pusat + dua busur gelombang
+  EPI: ["M12 12m-2.2 0a2.2 2.2 0 1 0 4.4 0a2.2 2.2 0 1 0 -4.4 0", "M7.5 7.5a6.4 6.4 0 0 0 0 9", "M16.5 7.5a6.4 6.4 0 0 1 0 9", "M4.6 4.6a10.5 10.5 0 0 0 0 14.8", "M19.4 4.6a10.5 10.5 0 0 1 0 14.8"],
   GNSS: ["M13 7 9 3 5 7l4 4", "m17 11 4 4-4 4-4-4", "m8 12 4 4 6-6-4-4Z", "m16 8 3-3", "M9 21a6 6 0 0 0-6-6"],
   Akselerometer: ["M22 12h-4l-3 9L9 3l-3 9H2"],
   Tiltmeter: ["M4 20h16", "M6 20 18 6", "M14 20a8 8 0 0 0-3-6"],
@@ -98,7 +100,9 @@ const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2);
  * Viewport 3D. Status, nilai, dan percepatan dibaca dari props; MapView hanya menggambar.
  * Gerak (urai, pergeseran, getaran) dihitung tiap frame di preRender agar halus.
  */
-export default function MapView({ data, st, layers, urai, selected, onSelect, focus, dim, basemap, playing, mode, onReady, onTileError }) {
+const regional = (f) => f === "region" || f === "gempa";
+
+export default function MapView({ data, st, episenter, layers, urai, selected, onSelect, focus, dim, basemap, playing, mode, onReady, onTileError }) {
   const el = useRef(null);
   const v = useRef(null);
   const models = useRef({});
@@ -325,7 +329,13 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
   useEffect(() => {
     const viewer = v.current; if (!viewer) return;
     viewer.scene.screenSpaceCameraController.enableTilt = dim === "3d";
-    if (focus === "region") {
+    if (focus === "gempa" && episenter) {
+      // bingkai yang memuat episenter dan jembatan
+      const { lat, lon } = episenter.episenter;
+      const w = Math.min(lon, 110.3154), e = Math.max(lon, 110.3154), s_ = Math.min(lat, -7.9895), n = Math.max(lat, -7.9895);
+      const pad = Math.max(0.12, (e - w) * 0.35, (n - s_) * 0.35);
+      viewer.camera.flyTo({ destination: Cesium.Rectangle.fromDegrees(w - pad, s_ - pad, e + pad, n + pad), duration: 1.4 });
+    } else if (regional(focus)) {
       viewer.camera.flyTo({ destination: Cesium.Rectangle.fromDegrees(110.0, -8.4, 111.05, -7.2), duration: 1.4 });
     } else if (dim === "2d") {
       viewer.camera.flyTo({
@@ -342,7 +352,7 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
         duration: 1.2,
       });
     }
-  }, [focus, dim, urai]);
+  }, [focus, dim, urai, episenter?.id]);
 
   // ---------- warna komponen sesuai status
   useEffect(() => {
@@ -376,8 +386,8 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
       let P = pin(s.jenis, col, (gnss ? 30 : 22) + (sel ? 8 : 0), gnss ? 16 : 10);
       if (sel) P = pinTeks(P, teks(s.id, "#25245A", 13));
       let e = ents.getById(s.id);
-      if (!e) e = ents.add({ id: s.id, position: follow(s.lon, s.lat, data.aset.model.h_m + s.h_lokal_m + (s.jenis === "GNSS" ? 2.9 : s.jenis === "Akselerometer" ? -0.9 : 0.3), s.komponen) });
-      e.show = layers.Sensor && focus !== "region";
+      if (!e) e = ents.add({ id: s.id, position: follow(s.lon, s.lat, data.aset.model.h_m + s.h_lokal_m + (s.jenis === "GNSS" ? 2.9 : s.jenis === "Akselerometer" ? 0 : 0.3), s.komponen) });
+      e.show = layers.Sensor && !regional(focus);
       e.billboard = new Cesium.BillboardGraphics({
         image: P.canvas, width: P.w, height: P.h, verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
         disableDepthTestDistance: Number.POSITIVE_INFINITY,
@@ -390,7 +400,7 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
       let e = ents.getById(id);
       if (!e) e = ents.add({ id, position: follow(g.lon + 0.00012, g.lat, data.aset.model.h_m + 2, k.id) });
       const s = st.komp[k.id]?.status || "aman";
-      e.show = urai && focus !== "region";
+      e.show = urai && !regional(focus);
       const T = teks(`${k.id} · ${k.nama}`, s === "aman" ? "#25245A" : STATUS_COLOR[s], 13);
       e.billboard = new Cesium.BillboardGraphics({
         image: T.canvas, width: T.w, height: T.h, horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
@@ -412,8 +422,21 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
         pixelOffset: new Cesium.Cartesian2(0, P0.h / 2), disableDepthTestDistance: Number.POSITIVE_INFINITY,
       });
     }
+    // ---------- episenter gempa terpilih (katalog BMKG) + garis ke jembatan
+    for (const id of ["EPI", "EPI-GARIS"]) { const x = ents.getById(id); if (x) ents.remove(x); }
+    if (episenter) {
+      const { lat, lon } = episenter.episenter;
+      const P0 = pin("EPI", "#C8323A", 34, 0);
+      const P = pinTeks(P0, teks(`Episenter M${episenter.mw_input.toFixed(1)} · ${episenter.nama.replace("Gempa ", "")} · ${Math.round(episenter.jarak_episenter_km)} km`, "#9E1F27", 13));
+      ents.add({ id: "EPI", position: Cesium.Cartesian3.fromDegrees(lon, lat, 0), billboard: new Cesium.BillboardGraphics({
+        image: P.canvas, width: P.w, height: P.h, verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+        pixelOffset: new Cesium.Cartesian2(0, P0.h / 2), disableDepthTestDistance: Number.POSITIVE_INFINITY }) });
+      ents.add({ id: "EPI-GARIS", polyline: new Cesium.PolylineGraphics({
+        positions: Cesium.Cartesian3.fromDegreesArray([lon, lat, 110.3154, -7.9895]), width: 2.5, clampToGround: false,
+        material: new Cesium.PolylineDashMaterialProperty({ color: Cesium.Color.fromCssColorString("#C8323A"), dashLength: 14 }) }) });
+    }
     ents.resumeEvents();
-  }, [st, layers, urai, selected, data, focus, fontSiap]);
+  }, [st, layers, urai, selected, data, focus, fontSiap, episenter]);
 
   return (
     <>

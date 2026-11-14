@@ -1,4 +1,5 @@
 """
+
 Membuat DATA CONTOH untuk GNSSTwin sesuai kontrak data (lihat CONTRACT.md).
 
 File ini sengaja sederhana: noise acak + lompatan gempa buatan. Nanti mesin
@@ -12,6 +13,8 @@ Keluaran:
     public/data/stasiun.json
     public/data/skenario_opak_contoh.json
 """
+# CATATAN: skrip ini usang. Sensor sekarang diatur tools/atur_sensor.py dan skenario gempa tools/skenario_bmkg.py.
+import sys; sys.exit("usang: pakai tools/atur_sensor.py dan tools/skenario_bmkg.py")
 import json, math, os, random
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

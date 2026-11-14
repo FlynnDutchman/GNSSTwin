@@ -211,3 +211,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .progres2 small { color: var(--muted); font-size: 11px; }
 .banding .tr { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 6px; } .banding .tr > span:not(:first-child) { text-align: right; }
 .tabk { margin-top: 4px; }
+.gempa-list .row .mag { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 13px "IBM Plex Mono", monospace; color: #fff; background: #8C95A6; }
+.gempa-list .row .mag.m3 { background: #D9A400; } .gempa-list .row .mag.m4 { background: #E07B00; } .gempa-list .row .mag.m5 { background: #D9531E; } .gempa-list .row .mag.m6, .gempa-list .row .mag.m7 { background: #C8323A; }
+.gempa-list .row:disabled { opacity: .45; }

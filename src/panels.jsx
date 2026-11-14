@@ -89,32 +89,63 @@ export function SensorPanel({ data, st, i, selected, onSelect }) {
   );
 }
 
-export function GempaPanel({ data, st, mode, onRun, setView, onSelect }) {
-  const r = data.skenario.ringkasan;
-  const daftar = st.aktif ? data.skenario.status_komponen.daftar : [];
+export function GempaPanel({ data, st, mode, onRun, setView, onSelect, skId, onPilih, onReset }) {
+  const sk = data.skenario, m = sk.meta, r = sk.ringkasan;
+  const daftar = st.aktif ? sk.status_komponen.daftar : [];
+  const angka = (v, d = 1) => fmt(v, d);
   return (
     <>
+      <h3 className="title">Gempa · katalog BMKG 2026</h3>
+      <p className="muted">Pilih kejadian. Dampak di jembatan dihitung dari jarak episenter dan magnitudonya.</p>
+      <div className="list gempa-list">
+        {data.daftarGempa.map((k) => {
+          const g = k.meta, on = g.id === skId;
+          return (
+            <button key={g.id} className={`row ${on ? "active" : ""}`} onClick={() => onPilih(g.id)} disabled={mode === "gempa" && !on}>
+              <span className={`mag m${Math.min(7, Math.floor(g.mw_input))}`}>{angka(g.mw_input)}</span>
+              <span className="rt"><b>{g.nama.replace("Gempa ", "")}</b><small>{Math.abs(g.episenter.lat).toFixed(2)}° LS · {g.episenter.lon.toFixed(2)}° BT · {angka(g.jarak_episenter_km, 0)} km</small></span>
+              <span className="rv"><span className="mono">{g.mmi_romawi} MMI</span></span>
+            </button>
+          );
+        })}
+      </div>
+
       <div className="card hero">
-        <div className="hrow"><div><small className="eyebrow">{mode === "gempa" ? "GEMPA TERDETEKSI · SKENARIO" : "SKENARIO SIAP DIJALANKAN"}</small><h2>{data.skenario.meta.sumber}</h2></div>{st.aktif && <Badge status={st.worst} />}</div>
+        <div className="hrow"><div><small className="eyebrow">{mode === "gempa" ? "REPLAY · " + m.sumber : "SKENARIO TERPILIH · " + m.sumber}</small><h2>M {angka(m.mw_input)}{m.mw_awal ? ` (awal ${angka(m.mw_awal)})` : ""}</h2></div>{st.aktif && <Badge status={st.worst} />}</div>
         <div className="stats">
-          <div><b>{st.mw ? fmt(st.mw) : "–"}</b><small>Mw estimasi</small></div>
-          <div><b>{mode === "gempa" && st.deteksi.length ? `${r.waktu_deteksi_s} dtk` : "–"}</b><small>Deteksi</small></div>
-          <div><b>{st.deteksi.length}/{data.stasiun.length}</b><small>Stasiun</small></div>
+          <div><b>{m.mmi_romawi}</b><small>MMI di jembatan</small></div>
+          <div><b>{angka(m.pga_g * 100, 1)}%g</b><small>PGA tanah</small></div>
+          <div><b>{mode === "gempa" && st.deteksi.length ? `${st.deteksi.length}/${data.stasiun.length}` : r.stasiun_mendeteksi ? `${r.stasiun_mendeteksi}` : "0"}</b><small>InaCORS deteksi</small></div>
         </div>
-        <p className="note">Input skenario: Mw {fmt(data.skenario.meta.mw_input)} · kedalaman {data.skenario.meta.kedalaman_km} km · magnitudo dari PGD (Hardy dkk. 2025)</p>
-        {mode !== "gempa" && <button className="btn light" onClick={onRun}>Jalankan skenario gempa</button>}
+        <p className="note">Kedalaman {m.kedalaman_km} km ({m.kedalaman_sumber}) · jarak hiposenter {angka(m.jarak_hiposenter_km, 0)} km · {m.rasa}{m.catatan_bmkg ? ` · ${m.catatan_bmkg}` : ""}</p>
+        {mode !== "gempa" ? <button className="btn light" onClick={onRun}>Jalankan skenario gempa</button> : <button className="btn light" onClick={onReset}>Selesai · kembali</button>}
       </div>
-      <div className="label">STATUS KOMPONEN KRETEK I · DARI GNSS</div>
-      <div className="list">
-        {daftar.length === 0 && <p className="muted pad">Semua komponen aman.</p>}
-        {daftar.map((d) => (
-          <button key={d.komponen} className="row" onClick={() => { const s = data.aset.sensor.find((x) => x.komponen === d.komponen && x.jenis === "GNSS"); if (s) { onSelect(s.id); setView("sensor"); } }}>
-            <span className="dot-ic GNSS" />
-            <span className="rt"><b>{data.aset.komponen.find((k) => k.id === d.komponen)?.nama}</b><small>{d.indikator}</small></span>
-            <span className="rv"><span className="mono">{fmt(d.nilai_cm, d.satuan === "°" ? 2 : 1)} {d.satuan || "cm"}</span><Badge status={d.status} /></span>
-          </button>
-        ))}
+
+      <div className="table">
+        <div className="tr th"><span>DAMPAK DI KRETEK I (MODEL)</span><span></span></div>
+        <div className="tr"><span>Episenter (UTM 49S)</span><span className="mono">{m.episenter.utm49s_E.toLocaleString("id")} E · {m.episenter.utm49s_N.toLocaleString("id")} N</span></div>
+        <div className="tr"><span>Gelombang P / S tiba</span><span className="mono">+{angka(m.t_p_s)} / +{angka(m.t_s_s)} dtk</span></div>
+        <div className="tr"><span>Simpangan tanah dinamis (GNSS)</span><span className="mono">{angka(m.pgd_cm, 2)} cm</span></div>
+        <div className="tr"><span>Geser permanen</span><span className="mono">{angka(m.statis_mm, 3)} mm</span></div>
+        <div className="tr"><span>Percepatan dek maks (akselerometer)</span><span className="mono">{angka(m.pga_g * 2.2, 3)} g</span></div>
+        <div className="tr"><span>Mw dari PGD InaCORS</span><span className="mono">{r.mw_akhir ? angka(r.mw_akhir) : "– (< 2 stasiun)"}</span></div>
       </div>
+      <p className="muted small">Model: intensitas Bakun & Wentworth (1997), PGA dari MMI (Wald dkk. 1999), simpangan GNSS dari Melgar dkk. (2015). Gempa Pacitan menghasilkan IV MMI, sama dengan catatan BMKG di Bantul.</p>
+
+      {mode === "gempa" && <>
+        <div className="label">STATUS KOMPONEN KRETEK I</div>
+        <div className="list">
+          {daftar.length === 0 && <p className="muted pad">Menunggu guncangan tiba…</p>}
+          {daftar.map((d) => (
+            <button key={d.komponen} className="row" onClick={() => { const s = data.aset.sensor.find((x) => x.komponen === d.komponen); if (s) { onSelect(s.id); setView("sensor"); } }}>
+              <span className="dot-ic GNSS" />
+              <span className="rt"><b>{data.aset.komponen.find((k) => k.id === d.komponen)?.nama}</b><small>{d.indikator}</small></span>
+              <span className="rv"><Badge status={d.status} /></span>
+            </button>
+          ))}
+        </div>
+        <div className="table">{r.rekomendasi.map((x) => <div className="tr" key={x}><span>{x}</span></div>)}</div>
+      </>}
       {st.worst === "bahaya" && (
         <div className="card route">
           <div className="routeh"><Icon name="route" /><b>Jalur aman Bantul → Parangtritis</b></div>

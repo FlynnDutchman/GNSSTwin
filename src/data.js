@@ -3,12 +3,15 @@
 
 export async function loadAll() {
   const base = "./data/";
-  const [aset, stasiun, skenario] = await Promise.all([
+  const [aset, stasiun, bmkg] = await Promise.all([
     fetch(base + "aset_kretek1.json?v=" + __VERSI__).then((r) => r.json()),
     fetch(base + "stasiun.json?v=" + __VERSI__).then((r) => r.json()),
-    fetch(base + "skenario_opak_contoh.json?v=" + __VERSI__).then((r) => r.json()),
+    fetch(base + "skenario_bmkg.json?v=" + __VERSI__).then((r) => r.json()),
   ]);
-  return { aset, stasiun, skenario };
+  // skenario gempa = katalog BMKG 2026; respons sensor dihitung dari jarak & magnitudo (tools/skenario_bmkg.py)
+  const daftarGempa = bmkg.kejadian;
+  const skenario = daftarGempa.find((k) => k.meta.id === "20260206") || daftarGempa[0];
+  return { aset, stasiun, skenario, daftarGempa };
 }
 
 export const RANK = { bahaya: 0, waspada: 1, aman: 2 };

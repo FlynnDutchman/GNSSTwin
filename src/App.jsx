@@ -24,7 +24,10 @@ export default function App() {
   return <Shell data={data} />;
 }
 
-function Shell({ data }) {
+function Shell({ data: dataAwal }) {
+  // skenario gempa yang dipilih di menu Gempa (katalog BMKG)
+  const [skId, setSkId] = useState(dataAwal.skenario.meta.id);
+  const data = useMemo(() => ({ ...dataAwal, skenario: dataAwal.daftarGempa.find((k) => k.meta.id === skId) || dataAwal.skenario }), [dataAwal, skId]);
   const T = data.skenario.waktu_s;
   const t0idx = T.indexOf(0);
   const [view, setView] = useState("peta");
@@ -73,13 +76,15 @@ function Shell({ data }) {
     return { ...st0, sensors: st0.sensors.map((s) => s.id === "GNSS-2T" ? { ...s, nilai: { dE: e, dN: n, dU: u, hz: Math.hypot(e, n) }, sumber: "asli" } : s) };
   }, [st0, asli, ai, mode]);
   const jamAsli = asli ? new Date(asli.t0 + asli.t[ai] * 1000).toISOString().slice(11, 16) : null;
-  const focus = view === "inacors" ? "region" : "bridge";   // gempa tetap di jembatan agar getaran terlihat
+  // menu Gempa sebelum dijalankan: tampilkan episenter & jembatan; saat replay kembali ke jembatan agar getaran terlihat
+  const focus = view === "inacors" ? "region" : view === "gempa" && mode !== "gempa" ? "gempa" : "bridge";
 
   const runScenario = () => {
     setMode("gempa"); setI(t0idx - 10); setSpeed(5); setPlaying(true);
     setLayers((l) => ({ ...l, InaCORS: true })); setView("gempa");
   };
   const reset = () => { setMode("normal"); setI(0); setSpeed(1); setPlaying(true); };
+  const pilihGempa = (id) => { setSkId(id); setMode("normal"); setI(0); setSpeed(1); setPlaying(true); };
   const select = (id) => {
     setSelected(id);
     if (id?.startsWith("STA-")) setView("inacors");
@@ -90,7 +95,7 @@ function Shell({ data }) {
   const panel = {
     peta: <PetaPanel data={data} st={st} onSelect={setSelected} setView={setView} />,
     sensor: <SensorPanel data={data} st={st} i={i} selected={selected} onSelect={setSelected} />,
-    gempa: <GempaPanel data={data} st={st} mode={mode} onRun={runScenario} setView={setView} onSelect={setSelected} />,
+    gempa: <GempaPanel data={data} st={st} mode={mode} onRun={runScenario} setView={setView} onSelect={setSelected} skId={skId} onPilih={pilihGempa} onReset={reset} />,
     inacors: <InaCORSPanel data={data} st={st} selected={selected} onSelect={setSelected} />,
     laporan: <LaporanPanel data={data} st={st} mode={mode} />,
   }[view];
@@ -119,7 +124,7 @@ function Shell({ data }) {
 
       <main className="map">
         <Suspense fallback={<div className="mapload"><span className="spin" />Memuat peta 3D…</div>}>
-        <MapView data={data} st={st} layers={layers} urai={urai} selected={selected} onSelect={select} focus={focus} dim={dim} basemap={basemap} playing={playing} mode={mode} onTileError={setTileErr}
+        <MapView data={data} st={st} episenter={view === "gempa" || mode === "gempa" ? data.skenario.meta : null} layers={layers} urai={urai} selected={selected} onSelect={select} focus={focus} dim={dim} basemap={basemap} playing={playing} mode={mode} onTileError={setTileErr}
           onReady={(v) => (viewer.current = v)} />
         </Suspense>
 
