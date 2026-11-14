@@ -14,7 +14,8 @@ jobs:
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - name: Ambil bangunan LOD1 dari OpenStreetMap
-        run: node tools/ambil_lod1.mjs public/data/bangunan_lod1.json
+        # pakai file di repo bila ada; ambil dari OSM hanya bila belum ada
+        run: test -f public/data/bangunan_lod1.json || node tools/ambil_lod1.mjs public/data/bangunan_lod1.json
       - run: npm run build
       - run: touch dist/.nojekyll
       - uses: actions/upload-pages-artifact@v3
