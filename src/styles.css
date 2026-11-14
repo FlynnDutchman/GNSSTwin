@@ -196,3 +196,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .tr.note2 span { color: var(--muted); font-size: 12px; }
 .mapload { position: absolute; inset: 12px; border-radius: 20px; display: grid; place-content: center; grid-auto-flow: column; align-items: center; gap: 4px; color: var(--muted); font-size: 14px; background: linear-gradient(180deg, #dfe8f1, #eef2f6); }
 .cesium-widget-credits { display: none !important; }   /* kredit ditampilkan di legenda */
+.cek { display: flex; flex-wrap: wrap; gap: 6px; }
+.cek span { font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 999px; background: var(--bg); color: var(--muted); }
+.cek span.ok { background: var(--aman-bg); color: var(--aman); }
+.btn.besar { padding: 14px; font-size: 15px; }
+.progres { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; background: var(--blue-50); color: var(--blue-600); font-weight: 600; font-size: 13px; padding: 12px 14px; border-radius: 12px; }
+.progres small { flex-basis: 100%; color: var(--muted); font-weight: 500; font-size: 11px; }

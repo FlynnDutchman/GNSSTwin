@@ -41,7 +41,10 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
   const [hasil, setHasil] = useState(null); const [contoh, setContoh] = useState(false);
   const [uji, setUji] = useState(null);
   const [deteksi, setDeteksi] = useState(null);
+  const [lihatBukti, setLihatBukti] = useState(false);
+  const [manual, setManual] = useState(false);     // true bila pengguna memilih base/rover sendiri
   const inp = useRef(null);
+  const keHasil = useRef(null);
 
   const [dimuat, setDimuat] = useState(false);
   useEffect(() => { if (aktif) setDimuat(true); }, [aktif]);
@@ -50,17 +53,21 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
     cariServer().then(setServer);
     fetch("./data/uji_deteksi.json?v=" + __VERSI__).then((r) => (r.ok ? r.json() : null)).then(setDeteksi).catch(() => {});
     fetch("./data/uji_integritas.json?v=" + __VERSI__).then((r) => (r.ok ? r.json() : null)).then(setUji).catch(() => {});
-    fetch("./data/olahan_cpts_296.json?v=" + __VERSI__).then((r) => r.json()).then((h) => { setHasil((x) => x ?? h); setContoh(true); }).catch(() => {});
   }, [dimuat]);
 
   async function tambah(list) {
     setGalat(null); setProses("Membaca header RINEX…");
     try {
       const b = await periksaBerkas(list);
-      setBerkas((x) => [...x.filter((y) => !b.some((z) => z.nama === y.nama)), ...b]);
-      for (const f of b) if (f.header.tipe === "O") {
-        if (f.header.marker === "CBTL") setBase((v) => v || f.nama); else setRover((v) => v || f.nama);
-      }
+      const semua = [...berkas.filter((y) => !b.some((z) => z.nama === y.nama)), ...b];
+      setBerkas(semua);
+      // base otomatis: CBTL bila ada, kalau tidak stasiun Ina-CORS pertama yang dikenal; rover = observasi lainnya
+      const o = semua.filter((f) => f.header.tipe === "O");
+      const bs = (manual && semua.find((f) => f.nama === base)) || o.find((f) => f.header.marker === "CBTL") || o.find((f) => f.dikenal) || o[0];
+      const rv = (manual && semua.find((f) => f.nama === rover && f.nama !== bs?.nama)) || o.find((f) => f !== bs && f.header.marker === "CPTS") || o.find((f) => f !== bs);
+      setBase(bs?.nama || ""); setRover(rv?.nama || "");
+      const bukan = b.filter((f) => !["O", "N", "G", "M"].includes(f.header.tipe));
+      if (bukan.length) setGalat(`${bukan.map((f) => f.nama).join(", ")}: bukan file RINEX observasi/navigasi`);
     } catch (e) { setGalat(String(e.message || e)); }
     setProses(null);
   }
@@ -82,6 +89,7 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
         r = await olahDiBrowser(berkas, pilihan, setProses);
       }
       setHasil(keKolom(r)); setContoh(false); onAsli?.(null);
+      setTimeout(() => keHasil.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);   // langsung tampilkan hasil
     } catch (e) { setGalat(String(e.message || e)); }
     setProses(null);
   }
@@ -89,11 +97,14 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
   const obs = berkas.filter((f) => f.header.tipe === "O");
   const nav = berkas.filter((f) => f.header.tipe !== "O");
   const bisa = base && rover && base !== rover && nav.length && !proses;
+  const kurang = obs.length < 2 ? "Tambahkan 2 file observasi (.26o): satu stasiun base dan satu rover."
+    : !nav.length ? "Tambahkan file navigasi (.26n / .26g / BRDC…rnx.gz)."
+    : base === rover ? "Base dan rover harus berbeda." : "Pilih base dan rover.";
 
   return (
     <>
       <h3 className="title">Data GNSS</h3>
-      <p className="muted">Olah data mentah RINEX Ina-CORS dengan RTKLIB, langsung di aplikasi. File tidak dikirim ke mana pun.</p>
+      <p className="muted">Masukkan file RINEX Ina-CORS (base, rover, navigasi), lalu tekan <b>Olah data</b>. Pengolahan memakai RTKLIB di browser; file tidak dikirim ke mana pun.</p>
 
       <div className="drop" role="button" tabIndex={0} onClick={() => inp.current?.click()} onKeyDown={(e) => e.key === "Enter" && inp.current?.click()}
         onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); tambah([...e.dataTransfer.files]); }}>
@@ -116,25 +127,34 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
         </div>
       )}
 
-      {obs.length >= 2 && (
-        <div className="form">
-          <label>Base (koordinat resmi BIG)<select value={base} onChange={(e) => setBase(e.target.value)}><option value="">pilih</option>{obs.map((f) => <option key={f.nama} value={f.nama}>{f.header.marker} · {f.nama}</option>)}</select></label>
-          <label>Rover<select value={rover} onChange={(e) => setRover(e.target.value)}><option value="">pilih</option>{obs.map((f) => <option key={f.nama} value={f.nama}>{f.header.marker} · {f.nama}</option>)}</select></label>
-          <div className="lbl">Konstelasi</div>
-          <div className="seg sm">{[["G", "GPS"], ["GR", "GPS+GLONASS"], ["GRE", "G+R+Galileo"]].map(([k, l]) => <button key={k} className={sistem === k ? "on" : ""} onClick={() => setSistem(k)}>{l}</button>)}</div>
-          {server && <>
-            <div className="lbl">Mesin</div>
-            <div className="seg sm">{[["browser", "Browser (WebAssembly)"], ["server", "Server lokal (native)"]].map(([k, l]) => <button key={k} className={mesin === k ? "on" : ""} onClick={() => setMesin(k)}>{l}</button>)}</div>
-          </>}
-          <label className="cb"><input type="checkbox" checked={reset} onChange={(e) => setReset(e.target.checked)} />Ulang filter otomatis bila divergen</label>
-          <button className="btn" disabled={!bisa} onClick={olah}>Olah dengan RTKLIB · 3 lapis</button>
+      {berkas.length > 0 && <>
+        <div className="cek">
+          {[["Observasi base", !!base], ["Observasi rover", !!rover && rover !== base], ["Navigasi", nav.length > 0]].map(([l, ok]) => (
+            <span key={l} className={ok ? "ok" : ""}>{ok ? "✓" : "○"} {l}</span>))}
         </div>
-      )}
-      {proses && <p className="muted"><span className="spin" />{proses}</p>}
+        {obs.length >= 1 && (
+          <div className="form">
+            <label>Base (titik acuan, koordinat resmi BIG)<select value={base} onChange={(e) => { setBase(e.target.value); setManual(true); }}><option value="">pilih</option>{obs.map((f) => <option key={f.nama} value={f.nama}>{f.header.marker} · {f.nama}</option>)}</select></label>
+            <label>Rover (titik yang dipantau)<select value={rover} onChange={(e) => { setRover(e.target.value); setManual(true); }}><option value="">pilih</option>{obs.map((f) => <option key={f.nama} value={f.nama}>{f.header.marker} · {f.nama}</option>)}</select></label>
+            <div className="lbl">Satelit yang dipakai</div>
+            <div className="seg sm">{[["G", "GPS"], ["GR", "GPS+GLONASS"], ["GRE", "G+R+Galileo"]].map(([k, l]) => <button key={k} className={sistem === k ? "on" : ""} onClick={() => setSistem(k)}>{l}</button>)}</div>
+            {server && <>
+              <div className="lbl">Mesin</div>
+              <div className="seg sm">{[["browser", "Browser"], ["server", "Server lokal"]].map(([k, l]) => <button key={k} className={mesin === k ? "on" : ""} onClick={() => setMesin(k)}>{l}</button>)}</div>
+            </>}
+          </div>
+        )}
+        <button className="btn besar" id="tombol-olah" disabled={!bisa} onClick={olah}>{proses ? "Sedang mengolah…" : "▶ Olah data"}</button>
+        {!bisa && !proses && <p className="muted small">{kurang}</p>}
+        <button className="linkbtn" onClick={() => { setBerkas([]); setBase(""); setRover(""); setManual(false); setHasil(null); setGalat(null); onAsli?.(null); }}>Hapus semua file</button>
+      </>}
+      {proses && <div className="progres"><span className="spin" />{proses}<small>Data 24 jam butuh ±1 menit. Jangan tutup halaman.</small></div>}
       {galat && <p className="err">{galat}</p>}
 
+      <div ref={keHasil} />
       {hasil && <Hasil h={hasil} contoh={contoh} onAsli={onAsli} asliAktif={asliAktif} />}
-      {uji && <Integritas uji={uji} deteksi={deteksi} />}
+      {uji && <button className="linkbtn" onClick={() => setLihatBukti((x) => !x)}>{lihatBukti ? "Sembunyikan" : "Lihat"} bukti validasi pengolahan</button>}
+      {uji && lihatBukti && <Integritas uji={uji} deteksi={deteksi} />}
     </>
   );
 }
@@ -148,7 +168,7 @@ function Hasil({ h, contoh, onAsli, asliAktif }) {
   const sE = m.stat_epoch, s2 = m.stat_2jam;
   return (
     <>
-      <div className="label">{contoh ? "CONTOH HASIL · DATA ASLI DOY 296 (23 OKT 2026)" : "HASIL OLAHAN"}</div>
+      <div className="label">HASIL OLAHAN</div>
       <div className="table">
         <div className="tr th blue"><span>{m.base.kode} → {m.rover.kode} · {m.sistem === "GR" ? "GPS+GLONASS" : m.sistem === "G" ? "GPS" : "G+R+Galileo"}</span><span>{m.mesin.includes("WebAssembly") ? "RTKLIB · browser" : "RTKLIB · native"}</span></div>
         <div className="tr"><span>Epoch terolah</span><span className="mono">{m.jumlah_epoch.toLocaleString("id")} / {m.epoch_harapan.toLocaleString("id")}</span></div>
