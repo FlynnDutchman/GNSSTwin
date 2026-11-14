@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+TOP72110        NONE                                        TYPE / SERIAL NO    
+CONVERTED           TUM                      1    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM igs_01.pcv                                   COMMENT             
+   G01                                                      START OF FREQUENCY  
+     -3.24      6.77    128.94                              NORTH / EAST / UP   
+   NOAZI    0.00   -1.33   -2.01   -2.24   -2.34   -2.33   -2.28   -2.31   -2.60   -2.94   -3.58   -4.52   -5.96   -7.78   -9.91  -12.24  -14.57
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+     -4.69      5.84    120.15                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.63   -1.21   -1.88   -2.49   -3.18   -3.90   -4.67   -5.42   -6.22   -6.86   -7.36   -7.73   -8.13   -8.63   -9.23   -9.78
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

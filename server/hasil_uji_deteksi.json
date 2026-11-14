@@ -1,0 +1,146 @@
+{
+ "catatan": "pergeseran horizontal (E) disisipkan mulai 12:00 GPST",
+ "alarm_palsu": 0,
+ "hasil": [
+  {
+   "lapis": "jam2",
+   "geser_cm": 1,
+   "terdeteksi": "0/7",
+   "status": [
+    "aman",
+    "aman",
+    "aman",
+    "aman",
+    "aman",
+    "aman",
+    "aman"
+   ]
+  },
+  {
+   "lapis": "jam2",
+   "geser_cm": 2,
+   "terdeteksi": "0/7",
+   "status": [
+    "aman",
+    "aman",
+    "aman",
+    "aman",
+    "aman",
+    "aman",
+    "aman"
+   ]
+  },
+  {
+   "lapis": "jam2",
+   "geser_cm": 3,
+   "terdeteksi": "4/7",
+   "status": [
+    "waspada",
+    "waspada",
+    "aman",
+    "aman",
+    "waspada",
+    "aman",
+    "waspada"
+   ]
+  },
+  {
+   "lapis": "jam2",
+   "geser_cm": 4,
+   "terdeteksi": "7/7",
+   "status": [
+    "waspada",
+    "waspada",
+    "waspada",
+    "waspada",
+    "waspada",
+    "waspada",
+    "waspada"
+   ]
+  },
+  {
+   "lapis": "jam2",
+   "geser_cm": 5,
+   "terdeteksi": "7/7",
+   "status": [
+    "waspada",
+    "waspada",
+    "waspada",
+    "waspada",
+    "waspada",
+    "waspada",
+    "waspada"
+   ]
+  },
+  {
+   "lapis": "jam2",
+   "geser_cm": 6,
+   "terdeteksi": "7/7",
+   "status": [
+    "bahaya",
+    "bahaya",
+    "bahaya",
+    "bahaya",
+    "bahaya",
+    "bahaya",
+    "bahaya"
+   ]
+  },
+  {
+   "lapis": "epoch",
+   "geser_cm": 5,
+   "terdeteksi": "1/7",
+   "status": [
+    "aman",
+    "aman",
+    "aman",
+    "aman",
+    "aman",
+    "waspada",
+    "aman"
+   ]
+  },
+  {
+   "lapis": "epoch",
+   "geser_cm": 10,
+   "terdeteksi": "6/7",
+   "status": [
+    "waspada",
+    "waspada",
+    "waspada",
+    "aman",
+    "bahaya",
+    "waspada",
+    "waspada"
+   ]
+  },
+  {
+   "lapis": "epoch",
+   "geser_cm": 15,
+   "terdeteksi": "7/7",
+   "status": [
+    "bahaya",
+    "waspada",
+    "bahaya",
+    "bahaya",
+    "bahaya",
+    "bahaya",
+    "bahaya"
+   ]
+  },
+  {
+   "lapis": "epoch",
+   "geser_cm": 25,
+   "terdeteksi": "7/7",
+   "status": [
+    "bahaya",
+    "bahaya",
+    "bahaya",
+    "bahaya",
+    "bahaya",
+    "bahaya",
+    "bahaya"
+   ]
+  }
+ ]
+}

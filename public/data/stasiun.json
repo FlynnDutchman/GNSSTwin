@@ -1,0 +1,77 @@
+[
+ {
+  "kode": "CPTS",
+  "nama": "Parangtritis",
+  "lat": -8.00887962,
+  "lon": 110.30194436,
+  "h_m": 47.361,
+  "status": "online",
+  "peran": "Base utama Kretek I",
+  "koordinat": "header RINEX",
+  "receiver": "Trimble Alloy",
+  "antena": "TRM159900.00",
+  "konstelasi": [
+   "GPS",
+   "GLONASS",
+   "Galileo",
+   "SBAS"
+  ]
+ },
+ {
+  "kode": "CBTL",
+  "nama": "Bantul",
+  "lat": -7.89255278,
+  "lon": 110.3354999,
+  "h_m": 76.839,
+  "status": "online",
+  "peran": "Base kedua",
+  "koordinat": "header RINEX",
+  "receiver": "Trimble Alloy",
+  "antena": "LEIAR20",
+  "konstelasi": [
+   "GPS",
+   "GLONASS",
+   "Galileo"
+  ]
+ },
+ {
+  "kode": "JOGS",
+  "nama": "Yogyakarta",
+  "lat": -7.8,
+  "lon": 110.28,
+  "h_m": null,
+  "status": "offline",
+  "peran": "Deteksi gempa (data terakhir DOY 263)",
+  "koordinat": "PERKIRAAN dari peta"
+ },
+ {
+  "kode": "CSDG",
+  "nama": "Paranggupito",
+  "lat": -8.17,
+  "lon": 110.84,
+  "h_m": null,
+  "status": "lokasi",
+  "peran": "Deteksi gempa, sisi timur",
+  "koordinat": "PERKIRAAN dari peta"
+ },
+ {
+  "kode": "CSLO",
+  "nama": "Surakarta",
+  "lat": -7.57,
+  "lon": 110.82,
+  "h_m": null,
+  "status": "lokasi",
+  "peran": "Deteksi gempa, timur laut",
+  "koordinat": "PERKIRAAN dari peta"
+ },
+ {
+  "kode": "CMGL",
+  "nama": "Magelang",
+  "lat": -7.47,
+  "lon": 110.22,
+  "h_m": null,
+  "status": "lokasi",
+  "peran": "Deteksi gempa, utara",
+  "koordinat": "PERKIRAAN dari peta"
+ }
+]

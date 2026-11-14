@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+LEIAT503        LEIC                                        TYPE / SERIAL NO    
+FIELD               NGS                      4    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+      1.36     -0.63     60.54                              NORTH / EAST / UP   
+   NOAZI    0.00    0.77    0.99    0.76    0.06   -0.83   -1.78   -2.71   -3.30   -3.64   -3.58   -3.22   -2.36   -1.28    0.39    2.46    5.23
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+      1.41     -0.46     83.25                              NORTH / EAST / UP   
+   NOAZI    0.00    0.07   -0.01   -0.18   -0.49   -0.78   -1.30   -1.67   -2.12   -2.42   -2.46   -2.26   -1.83   -1.13   -0.33    0.67    2.02
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

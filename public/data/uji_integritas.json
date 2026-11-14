@@ -1,0 +1,407 @@
+{
+ "tanggal": "2026-11-14T06:19:34.427Z",
+ "uji": [
+  {
+   "uji": "A-statik",
+   "doy": 291,
+   "aplikasi_mm": [
+    -7.5,
+    -0.9,
+    -71.9
+   ],
+   "native_mm": [
+    -7.5,
+    -0.9,
+    -71.9
+   ],
+   "beda_mm": [
+    0,
+    0,
+    0
+   ],
+   "lolos": true
+  },
+  {
+   "uji": "status",
+   "doy": 291,
+   "epoch": "waspada",
+   "jam2": "aman",
+   "alasan": "semua jendela di bawah ambang",
+   "sb_2jam": {
+    "e": {
+     "sb_mm": 3.5,
+     "sb_robust_mm": 3.1
+    },
+    "n": {
+     "sb_mm": 1.9,
+     "sb_robust_mm": 1.6
+    },
+    "u": {
+     "sb_mm": 16.8,
+     "sb_robust_mm": 13.2
+    }
+   },
+   "fix": 85.6,
+   "reset": 0
+  },
+  {
+   "uji": "A-statik",
+   "doy": 292,
+   "aplikasi_mm": [
+    -4.9,
+    -1.2,
+    -70.4
+   ],
+   "native_mm": [
+    -4.9,
+    -1.2,
+    -70.4
+   ],
+   "beda_mm": [
+    0,
+    0,
+    0
+   ],
+   "lolos": true
+  },
+  {
+   "uji": "status",
+   "doy": 292,
+   "epoch": "aman",
+   "jam2": "aman",
+   "alasan": "1 jendela tunggal melewati ambang (diabaikan, bukan berturut-turut)",
+   "sb_2jam": {
+    "e": {
+     "sb_mm": 10.9,
+     "sb_robust_mm": 3.6
+    },
+    "n": {
+     "sb_mm": 5.3,
+     "sb_robust_mm": 3.9
+    },
+    "u": {
+     "sb_mm": 12.8,
+     "sb_robust_mm": 19.4
+    }
+   },
+   "fix": 62.8,
+   "reset": 0
+  },
+  {
+   "uji": "A-statik",
+   "doy": 293,
+   "aplikasi_mm": [
+    -4.7,
+    0.7,
+    -71.2
+   ],
+   "native_mm": [
+    -4.7,
+    0.7,
+    -71.2
+   ],
+   "beda_mm": [
+    0,
+    0,
+    0
+   ],
+   "lolos": true
+  },
+  {
+   "uji": "status",
+   "doy": 293,
+   "epoch": "aman",
+   "jam2": "aman",
+   "alasan": "semua jendela di bawah ambang",
+   "sb_2jam": {
+    "e": {
+     "sb_mm": 3.3,
+     "sb_robust_mm": 4.6
+    },
+    "n": {
+     "sb_mm": 3.1,
+     "sb_robust_mm": 2.1
+    },
+    "u": {
+     "sb_mm": 13.4,
+     "sb_robust_mm": 18.2
+    }
+   },
+   "fix": 85.4,
+   "reset": 1
+  },
+  {
+   "uji": "reset-divergensi",
+   "doy": 293,
+   "tanpa_reset": {
+    "epoch": 40,
+    "fix": 0
+   },
+   "dengan_reset": {
+    "epoch": 2877,
+    "fix": 85.4,
+    "reset": [
+     {
+      "waktu": "2026-10-20 00:20:00 GPST",
+      "sebab": "berhenti"
+     }
+    ]
+   }
+  },
+  {
+   "uji": "A-statik",
+   "doy": 294,
+   "aplikasi_mm": [
+    -1.6,
+    0.2,
+    -72.7
+   ],
+   "native_mm": [
+    -1.6,
+    0.2,
+    -72.7
+   ],
+   "beda_mm": [
+    0,
+    0,
+    0
+   ],
+   "lolos": true
+  },
+  {
+   "uji": "status",
+   "doy": 294,
+   "epoch": "aman",
+   "jam2": "aman",
+   "alasan": "1 jendela tunggal melewati ambang (diabaikan, bukan berturut-turut)",
+   "sb_2jam": {
+    "e": {
+     "sb_mm": 12.5,
+     "sb_robust_mm": 4.6
+    },
+    "n": {
+     "sb_mm": 10.4,
+     "sb_robust_mm": 7.3
+    },
+    "u": {
+     "sb_mm": 20,
+     "sb_robust_mm": 23.3
+    }
+   },
+   "fix": 96.7,
+   "reset": 0
+  },
+  {
+   "uji": "A-statik",
+   "doy": 295,
+   "aplikasi_mm": [
+    -8.7,
+    2.5,
+    -83.2
+   ],
+   "native_mm": [
+    -8.7,
+    2.5,
+    -83.2
+   ],
+   "beda_mm": [
+    0,
+    0,
+    0
+   ],
+   "lolos": true
+  },
+  {
+   "uji": "status",
+   "doy": 295,
+   "epoch": "aman",
+   "jam2": "aman",
+   "alasan": "semua jendela di bawah ambang",
+   "sb_2jam": {
+    "e": {
+     "sb_mm": 4.8,
+     "sb_robust_mm": null
+    },
+    "n": {
+     "sb_mm": 5.7,
+     "sb_robust_mm": null
+    },
+    "u": {
+     "sb_mm": 13.6,
+     "sb_robust_mm": null
+    }
+   },
+   "fix": 78.8,
+   "reset": 0
+  },
+  {
+   "uji": "A-statik",
+   "doy": 296,
+   "aplikasi_mm": [
+    -8.7,
+    -2.2,
+    -60.5
+   ],
+   "native_mm": [
+    -8.7,
+    -2.2,
+    -60.5
+   ],
+   "beda_mm": [
+    0,
+    0,
+    0
+   ],
+   "lolos": true
+  },
+  {
+   "uji": "status",
+   "doy": 296,
+   "epoch": "aman",
+   "jam2": "aman",
+   "alasan": "1 jendela tunggal melewati ambang (diabaikan, bukan berturut-turut)",
+   "sb_2jam": {
+    "e": {
+     "sb_mm": 6.4,
+     "sb_robust_mm": 4.7
+    },
+    "n": {
+     "sb_mm": 10.5,
+     "sb_robust_mm": 8.7
+    },
+    "u": {
+     "sb_mm": 8.6,
+     "sb_robust_mm": 12.3
+    }
+   },
+   "fix": 74.4,
+   "reset": 0
+  },
+  {
+   "uji": "A-kinematik",
+   "doy": 296,
+   "epoch_aplikasi": 2832,
+   "epoch_native": 2832,
+   "beda_posisi_maks_mm": 0.11,
+   "epoch_status_beda": 0,
+   "lolos": true
+  },
+  {
+   "uji": "G-kecepatan",
+   "doy": 296,
+   "epoch": 2832,
+   "ms_per_epoch": 2.46,
+   "interval_data_ms": 30000,
+   "kali_lebih_cepat_dari_realtime": 12392,
+   "lolos": true
+  },
+  {
+   "uji": "A-statik",
+   "doy": 297,
+   "aplikasi_mm": [
+    -6.2,
+    0.6,
+    -70
+   ],
+   "native_mm": [
+    -6.2,
+    0.6,
+    -70
+   ],
+   "beda_mm": [
+    0,
+    0,
+    0
+   ],
+   "lolos": true
+  },
+  {
+   "uji": "status",
+   "doy": 297,
+   "epoch": "aman",
+   "jam2": "aman",
+   "alasan": "semua jendela di bawah ambang",
+   "sb_2jam": {
+    "e": {
+     "sb_mm": 3.5,
+     "sb_robust_mm": 3.9
+    },
+    "n": {
+     "sb_mm": 2.4,
+     "sb_robust_mm": 3.3
+    },
+    "u": {
+     "sb_mm": 12.8,
+     "sb_robust_mm": 11.9
+    }
+   },
+   "fix": 93.1,
+   "reset": 0
+  },
+  {
+   "uji": "auspos",
+   "doy": 296,
+   "beda_mm": [
+    0.9,
+    0.2,
+    -0.2
+   ],
+   "beda_maks_mm": 0.9,
+   "sumber": "AUSPOS job 1794633063151, ITRF2020, orbit IGS final"
+  },
+  {
+   "uji": "A-browser",
+   "doy": 295,
+   "mesin": "RTKLIB WebAssembly di Chromium",
+   "harian_browser_mm": [
+    -8.7,
+    2.5,
+    -83.2
+   ],
+   "harian_native_mm": [
+    -8.7,
+    2.5,
+    -83.2
+   ],
+   "beda_maks_mm": 0.0,
+   "lolos": true,
+   "catatan": "lapis per epoch tidak identik bit-per-bit (pustaka matematika berbeda \u2192 jalur fix ambiguitas berbeda), sebaran setara"
+  },
+  {
+   "uji": "A-browser",
+   "doy": 296,
+   "mesin": "RTKLIB WebAssembly di Chromium",
+   "harian_browser_mm": [
+    -8.7,
+    -2.2,
+    -60.5
+   ],
+   "harian_native_mm": [
+    -8.7,
+    -2.2,
+    -60.5
+   ],
+   "beda_maks_mm": 0.0,
+   "lolos": true,
+   "catatan": "lapis per epoch tidak identik bit-per-bit (pustaka matematika berbeda \u2192 jalur fix ambiguitas berbeda), sebaran setara"
+  },
+  {
+   "uji": "A-browser",
+   "doy": 297,
+   "mesin": "RTKLIB WebAssembly di Chromium",
+   "harian_browser_mm": [
+    -6.2,
+    0.6,
+    -70.0
+   ],
+   "harian_native_mm": [
+    -6.2,
+    0.6,
+    -70.0
+   ],
+   "beda_maks_mm": 0.0,
+   "lolos": true,
+   "catatan": "lapis per epoch tidak identik bit-per-bit (pustaka matematika berbeda \u2192 jalur fix ambiguitas berbeda), sebaran setara"
+  }
+ ]
+}

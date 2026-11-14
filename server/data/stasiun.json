@@ -1,0 +1,7 @@
+{
+  "_sumber": "Lembar deskripsi stasiun Ina-CORS BIG, SRGI2013 epoch 2021.0 (pembaruan 2025-04-16). Tinggi antena = lembar BIG (ARP), bukan header RINEX.",
+  "epoch0": 2021.0,
+  "CPTS": {"nama": "Parangtritis", "xyz": [-2191580.209, 5923993.307, -882758.987], "v": [-0.025, -0.010, -0.008], "ant": "TRM159900.00    SCIS", "h": 0.055},
+  "CBTL": {"nama": "Bantul",       "xyz": [-2195675.058, 5924401.711, -870018.208], "v": [-0.024, -0.010, -0.008], "ant": "LEIAR20         LEIM", "h": 0.055},
+  "CSDG": {"nama": "Sadeng",       "xyz": [-2241912.513, 5902084.097, -902643.971], "v": [-0.027, -0.009, -0.005], "ant": "TRM159900.00    SCIS", "h": 0.057}
+}

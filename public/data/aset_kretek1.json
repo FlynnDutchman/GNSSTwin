@@ -1,0 +1,246 @@
+{
+ "id": "kretek1",
+ "nama": "Jembatan Kretek I",
+ "lokasi": "Jl. Parangtritis · Sungai Opak, Bantul",
+ "tipe": "Rangka baja 4 bentang",
+ "model": {
+  "lat": -7.99061556,
+  "lon": 110.31539025,
+  "h_m": 0.0,
+  "heading_deg": 0.62
+ },
+ "ambang": {
+  "geser_perletakan_cm": {
+   "waspada": 2.5,
+   "bahaya": 5.0
+  },
+  "penurunan_abutmen_cm": {
+   "waspada": 1.5,
+   "bahaya": 3.0
+  },
+  "pilar_horizontal_cm": {
+   "waspada": 2.5,
+   "bahaya": 5.0
+  },
+  "catatan": "Nilai asumsi demo, bukan nilai desain jembatan."
+ },
+ "komponen": [
+  {
+   "id": "AS",
+   "nama": "Abutmen selatan",
+   "model": "models/kretek1/AS.glb"
+  },
+  {
+   "id": "B1",
+   "nama": "Bentang 1",
+   "model": "models/kretek1/B1.glb",
+   "urai_m": 6
+  },
+  {
+   "id": "P1",
+   "nama": "Pilar P1",
+   "model": "models/kretek1/P1.glb"
+  },
+  {
+   "id": "B2",
+   "nama": "Bentang 2",
+   "model": "models/kretek1/B2.glb",
+   "urai_m": 6
+  },
+  {
+   "id": "P2",
+   "nama": "Pilar P2",
+   "model": "models/kretek1/P2.glb"
+  },
+  {
+   "id": "B3",
+   "nama": "Bentang 3",
+   "model": "models/kretek1/B3.glb",
+   "urai_m": 6
+  },
+  {
+   "id": "P3",
+   "nama": "Pilar P3",
+   "model": "models/kretek1/P3.glb"
+  },
+  {
+   "id": "B4",
+   "nama": "Bentang 4",
+   "model": "models/kretek1/B4.glb",
+   "urai_m": 6
+  },
+  {
+   "id": "AU",
+   "nama": "Abutmen utara",
+   "model": "models/kretek1/AU.glb"
+  },
+  {
+   "id": "LAIN",
+   "nama": "Elemen lain (oprit, railing, marka, sungai)",
+   "model": "models/kretek1/LAIN.glb",
+   "urai_m": 0
+  }
+ ],
+ "sensor": [
+  {
+   "id": "GNSS-A1",
+   "jenis": "GNSS",
+   "komponen": "AS",
+   "lat": -7.99062252,
+   "lon": 110.31543419,
+   "h_lokal_m": 8.12,
+   "keterangan": "Posisi 3D",
+   "base": "CPTS"
+  },
+  {
+   "id": "GNSS-A2",
+   "jenis": "GNSS",
+   "komponen": "AU",
+   "lat": -7.9882953,
+   "lon": 110.31545937,
+   "h_lokal_m": 8.12,
+   "keterangan": "Posisi 3D",
+   "base": "CPTS"
+  },
+  {
+   "id": "GNSS-P1",
+   "jenis": "GNSS",
+   "komponen": "P1",
+   "lat": -7.99000023,
+   "lon": 110.31544273,
+   "h_lokal_m": 6.0,
+   "keterangan": "Posisi 3D",
+   "base": "CPTS"
+  },
+  {
+   "id": "TILT-P1",
+   "jenis": "Tiltmeter",
+   "komponen": "P1",
+   "lat": -7.98999927,
+   "lon": 110.31535292,
+   "h_lokal_m": 5.0,
+   "keterangan": "Kemiringan",
+   "base": null
+  },
+  {
+   "id": "GNSS-P2",
+   "jenis": "GNSS",
+   "komponen": "P2",
+   "lat": -7.98942983,
+   "lon": 110.31544891,
+   "h_lokal_m": 6.0,
+   "keterangan": "Posisi 3D",
+   "base": "CPTS"
+  },
+  {
+   "id": "TILT-P2",
+   "jenis": "Tiltmeter",
+   "komponen": "P2",
+   "lat": -7.98942887,
+   "lon": 110.31535909,
+   "h_lokal_m": 5.0,
+   "keterangan": "Kemiringan",
+   "base": null
+  },
+  {
+   "id": "GNSS-P3",
+   "jenis": "GNSS",
+   "komponen": "P3",
+   "lat": -7.98887451,
+   "lon": 110.31545492,
+   "h_lokal_m": 6.0,
+   "keterangan": "Posisi 3D",
+   "base": "CPTS"
+  },
+  {
+   "id": "TILT-P3",
+   "jenis": "Tiltmeter",
+   "komponen": "P3",
+   "lat": -7.98887354,
+   "lon": 110.3153651,
+   "h_lokal_m": 5.0,
+   "keterangan": "Kemiringan",
+   "base": null
+  },
+  {
+   "id": "GNSS-B1",
+   "jenis": "GNSS",
+   "komponen": "B1",
+   "lat": -7.99029238,
+   "lon": 110.31543114,
+   "h_lokal_m": 12.8,
+   "keterangan": "Posisi 3D",
+   "base": "CPTS"
+  },
+  {
+   "id": "ACC-B1",
+   "jenis": "Akselerometer",
+   "komponen": "B1",
+   "lat": -7.99029198,
+   "lon": 110.31539376,
+   "h_lokal_m": 7.05,
+   "keterangan": "Getaran",
+   "base": null
+  },
+  {
+   "id": "GNSS-B2",
+   "jenis": "GNSS",
+   "komponen": "B2",
+   "lat": -7.98971494,
+   "lon": 110.31543739,
+   "h_lokal_m": 12.8,
+   "keterangan": "Posisi 3D",
+   "base": "CPTS"
+  },
+  {
+   "id": "ACC-B2",
+   "jenis": "Akselerometer",
+   "komponen": "B2",
+   "lat": -7.98971454,
+   "lon": 110.31540001,
+   "h_lokal_m": 7.05,
+   "keterangan": "Getaran",
+   "base": null
+  },
+  {
+   "id": "GNSS-B3",
+   "jenis": "GNSS",
+   "komponen": "B3",
+   "lat": -7.98915208,
+   "lon": 110.31544348,
+   "h_lokal_m": 12.8,
+   "keterangan": "Posisi 3D",
+   "base": "CPTS"
+  },
+  {
+   "id": "ACC-B3",
+   "jenis": "Akselerometer",
+   "komponen": "B3",
+   "lat": -7.98915168,
+   "lon": 110.3154061,
+   "h_lokal_m": 7.05,
+   "keterangan": "Getaran",
+   "base": null
+  },
+  {
+   "id": "GNSS-B4",
+   "jenis": "GNSS",
+   "komponen": "B4",
+   "lat": -7.98860429,
+   "lon": 110.31544941,
+   "h_lokal_m": 12.8,
+   "keterangan": "Posisi 3D",
+   "base": "CPTS"
+  },
+  {
+   "id": "ACC-B4",
+   "jenis": "Akselerometer",
+   "komponen": "B4",
+   "lat": -7.98860389,
+   "lon": 110.31541203,
+   "h_lokal_m": 7.05,
+   "keterangan": "Getaran",
+   "base": null
+  }
+ ]
+}

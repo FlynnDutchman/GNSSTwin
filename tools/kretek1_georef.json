@@ -1,0 +1,290 @@
+{
+ "model": "kretek1_full.glb",
+ "sumber": "Ujung selatan 7°59'26.67\"S 110°18'55.40\"E, ujung utara 7°59'17.43\"S 110°18'55.50\"E (Google Maps, WGS84)",
+ "asal_model": {
+  "lat": -7.99061556,
+  "lon": 110.31539025,
+  "keterangan": "titik (0,0,0) model = muka abutmen selatan, permukaan air"
+ },
+ "heading_derajat": 0.523,
+ "panjang_dari_koordinat_m": 283.8,
+ "panjang_model_abutmen_ke_abutmen_m": 257.3,
+ "tinggi": "tinggi lokal model (z) relatif muka air; tinggi elipsoid muka air belum diketahui -> pakai terrain / isi manual",
+ "sensor": [
+  {
+   "id": "KRT1-GNSS-A1",
+   "jenis": "GNSS",
+   "bagian": "Abutmen Selatan",
+   "lat": -7.99062252,
+   "lon": 110.31543419,
+   "utm49s_E": 424557.94,
+   "utm49s_N": 9116676.19,
+   "tinggi_lokal_m": 8.12
+  },
+  {
+   "id": "KRT1-GNSS-A2",
+   "jenis": "GNSS",
+   "bagian": "Abutmen Utara",
+   "lat": -7.9882953,
+   "lon": 110.31545937,
+   "utm49s_E": 424560.29,
+   "utm49s_N": 9116933.49,
+   "tinggi_lokal_m": 8.12
+  },
+  {
+   "id": "KRT1-GNSS-P1",
+   "jenis": "GNSS",
+   "bagian": "Pilar P1",
+   "lat": -7.99000023,
+   "lon": 110.31544273,
+   "utm49s_E": 424558.77,
+   "utm49s_N": 9116744.99,
+   "tinggi_lokal_m": 6.0
+  },
+  {
+   "id": "KRT1-TILT-P1",
+   "jenis": "Tiltmeter",
+   "bagian": "Pilar P1",
+   "lat": -7.98999927,
+   "lon": 110.31535292,
+   "utm49s_E": 424548.87,
+   "utm49s_N": 9116745.08,
+   "tinggi_lokal_m": 5.0
+  },
+  {
+   "id": "KRT1-GNSS-P2",
+   "jenis": "GNSS",
+   "bagian": "Pilar P2",
+   "lat": -7.98942983,
+   "lon": 110.31544891,
+   "utm49s_E": 424559.35,
+   "utm49s_N": 9116808.06,
+   "tinggi_lokal_m": 6.0
+  },
+  {
+   "id": "KRT1-TILT-P2",
+   "jenis": "Tiltmeter",
+   "bagian": "Pilar P2",
+   "lat": -7.98942887,
+   "lon": 110.31535909,
+   "utm49s_E": 424549.45,
+   "utm49s_N": 9116808.15,
+   "tinggi_lokal_m": 5.0
+  },
+  {
+   "id": "KRT1-GNSS-P3",
+   "jenis": "GNSS",
+   "bagian": "Pilar P3",
+   "lat": -7.98887451,
+   "lon": 110.31545492,
+   "utm49s_E": 424559.91,
+   "utm49s_N": 9116869.45,
+   "tinggi_lokal_m": 6.0
+  },
+  {
+   "id": "KRT1-TILT-P3",
+   "jenis": "Tiltmeter",
+   "bagian": "Pilar P3",
+   "lat": -7.98887354,
+   "lon": 110.3153651,
+   "utm49s_E": 424550.01,
+   "utm49s_N": 9116869.54,
+   "tinggi_lokal_m": 5.0
+  },
+  {
+   "id": "KRT1-GNSS-B1",
+   "jenis": "GNSS",
+   "bagian": "Bentang 1 - Selatan (rangka 57,80 m, panel 6,42 m)",
+   "lat": -7.99029238,
+   "lon": 110.31543114,
+   "utm49s_E": 424557.55,
+   "utm49s_N": 9116712.69,
+   "tinggi_lokal_m": 12.8
+  },
+  {
+   "id": "KRT1-ACC-B1",
+   "jenis": "Akselerometer",
+   "bagian": "Bentang 1 - Selatan (rangka 57,80 m, panel 6,42 m)",
+   "lat": -7.99029198,
+   "lon": 110.31539376,
+   "utm49s_E": 424553.43,
+   "utm49s_N": 9116712.73,
+   "tinggi_lokal_m": 7.05
+  },
+  {
+   "id": "KRT1-GNSS-B2",
+   "jenis": "GNSS",
+   "bagian": "Bentang 2 - Tengah-selatan (rangka 56,40 m, panel 6,27 m)",
+   "lat": -7.98971494,
+   "lon": 110.31543739,
+   "utm49s_E": 424558.13,
+   "utm49s_N": 9116776.53,
+   "tinggi_lokal_m": 12.8
+  },
+  {
+   "id": "KRT1-ACC-B2",
+   "jenis": "Akselerometer",
+   "bagian": "Bentang 2 - Tengah-selatan (rangka 56,40 m, panel 6,27 m)",
+   "lat": -7.98971454,
+   "lon": 110.31540001,
+   "utm49s_E": 424554.01,
+   "utm49s_N": 9116776.57,
+   "tinggi_lokal_m": 7.05
+  },
+  {
+   "id": "KRT1-GNSS-B3",
+   "jenis": "GNSS",
+   "bagian": "Bentang 3 - Tengah-utara (rangka 54,90 m, panel 6,10 m)",
+   "lat": -7.98915208,
+   "lon": 110.31544348,
+   "utm49s_E": 424558.7,
+   "utm49s_N": 9116838.76,
+   "tinggi_lokal_m": 12.8
+  },
+  {
+   "id": "KRT1-ACC-B3",
+   "jenis": "Akselerometer",
+   "bagian": "Bentang 3 - Tengah-utara (rangka 54,90 m, panel 6,10 m)",
+   "lat": -7.98915168,
+   "lon": 110.3154061,
+   "utm49s_E": 424554.58,
+   "utm49s_N": 9116838.8,
+   "tinggi_lokal_m": 7.05
+  },
+  {
+   "id": "KRT1-GNSS-B4",
+   "jenis": "GNSS",
+   "bagian": "Bentang 4 - Utara (rangka 53,40 m, panel 5,93 m)",
+   "lat": -7.98860429,
+   "lon": 110.31544941,
+   "utm49s_E": 424559.25,
+   "utm49s_N": 9116899.33,
+   "tinggi_lokal_m": 12.8
+  },
+  {
+   "id": "KRT1-ACC-B4",
+   "jenis": "Akselerometer",
+   "bagian": "Bentang 4 - Utara (rangka 53,40 m, panel 5,93 m)",
+   "lat": -7.98860389,
+   "lon": 110.31541203,
+   "utm49s_E": 424555.13,
+   "utm49s_N": 9116899.36,
+   "tinggi_lokal_m": 7.05
+  }
+ ],
+ "komponen_node": {
+  "Jembatan_Kretek_I_/_Abutmen_Selatan": [
+   "Jembatan_Kretek_I_/_Abutmen_Selatan__aspal",
+   "Jembatan_Kretek_I_/_Abutmen_Selatan__beton",
+   "Jembatan_Kretek_I_/_Abutmen_Selatan__hitam",
+   "Jembatan_Kretek_I_/_Abutmen_Selatan__kerb",
+   "Jembatan_Kretek_I_/_Abutmen_Selatan__kuning",
+   "Jembatan_Kretek_I_/_Abutmen_Selatan__parapet",
+   "Jembatan_Kretek_I_/_Abutmen_Selatan__putih"
+  ],
+  "Jembatan_Kretek_I_/_Abutmen_Utara": [
+   "Jembatan_Kretek_I_/_Abutmen_Utara__aspal",
+   "Jembatan_Kretek_I_/_Abutmen_Utara__beton",
+   "Jembatan_Kretek_I_/_Abutmen_Utara__hitam",
+   "Jembatan_Kretek_I_/_Abutmen_Utara__kerb",
+   "Jembatan_Kretek_I_/_Abutmen_Utara__kuning",
+   "Jembatan_Kretek_I_/_Abutmen_Utara__parapet",
+   "Jembatan_Kretek_I_/_Abutmen_Utara__putih"
+  ],
+  "Jembatan_Kretek_I_/_Bentang_1_-_Selatan_(rangka_57,80_m,_panel_6,42_m)": [
+   "Jembatan_Kretek_I_/_Bentang_1_-_Selatan_(rangka_57,80_m,_panel_6,42_m)__aspal",
+   "Jembatan_Kretek_I_/_Bentang_1_-_Selatan_(rangka_57,80_m,_panel_6,42_m)__baja",
+   "Jembatan_Kretek_I_/_Bentang_1_-_Selatan_(rangka_57,80_m,_panel_6,42_m)__baja_bawah",
+   "Jembatan_Kretek_I_/_Bentang_1_-_Selatan_(rangka_57,80_m,_panel_6,42_m)__bantalan",
+   "Jembatan_Kretek_I_/_Bentang_1_-_Selatan_(rangka_57,80_m,_panel_6,42_m)__baut",
+   "Jembatan_Kretek_I_/_Bentang_1_-_Selatan_(rangka_57,80_m,_panel_6,42_m)__beton",
+   "Jembatan_Kretek_I_/_Bentang_1_-_Selatan_(rangka_57,80_m,_panel_6,42_m)__hitam",
+   "Jembatan_Kretek_I_/_Bentang_1_-_Selatan_(rangka_57,80_m,_panel_6,42_m)__kerb",
+   "Jembatan_Kretek_I_/_Bentang_1_-_Selatan_(rangka_57,80_m,_panel_6,42_m)__putih"
+  ],
+  "Jembatan_Kretek_I_/_Bentang_2_-_Tengah-selatan_(rangka_56,40_m,_panel_6,27_m)": [
+   "Jembatan_Kretek_I_/_Bentang_2_-_Tengah-selatan_(rangka_56,40_m,_panel_6,27_m)__aspal",
+   "Jembatan_Kretek_I_/_Bentang_2_-_Tengah-selatan_(rangka_56,40_m,_panel_6,27_m)__baja",
+   "Jembatan_Kretek_I_/_Bentang_2_-_Tengah-selatan_(rangka_56,40_m,_panel_6,27_m)__baja_bawah",
+   "Jembatan_Kretek_I_/_Bentang_2_-_Tengah-selatan_(rangka_56,40_m,_panel_6,27_m)__bantalan",
+   "Jembatan_Kretek_I_/_Bentang_2_-_Tengah-selatan_(rangka_56,40_m,_panel_6,27_m)__baut",
+   "Jembatan_Kretek_I_/_Bentang_2_-_Tengah-selatan_(rangka_56,40_m,_panel_6,27_m)__beton",
+   "Jembatan_Kretek_I_/_Bentang_2_-_Tengah-selatan_(rangka_56,40_m,_panel_6,27_m)__hitam",
+   "Jembatan_Kretek_I_/_Bentang_2_-_Tengah-selatan_(rangka_56,40_m,_panel_6,27_m)__kerb",
+   "Jembatan_Kretek_I_/_Bentang_2_-_Tengah-selatan_(rangka_56,40_m,_panel_6,27_m)__putih"
+  ],
+  "Jembatan_Kretek_I_/_Bentang_3_-_Tengah-utara_(rangka_54,90_m,_panel_6,10_m)": [
+   "Jembatan_Kretek_I_/_Bentang_3_-_Tengah-utara_(rangka_54,90_m,_panel_6,10_m)__aspal",
+   "Jembatan_Kretek_I_/_Bentang_3_-_Tengah-utara_(rangka_54,90_m,_panel_6,10_m)__baja",
+   "Jembatan_Kretek_I_/_Bentang_3_-_Tengah-utara_(rangka_54,90_m,_panel_6,10_m)__baja_bawah",
+   "Jembatan_Kretek_I_/_Bentang_3_-_Tengah-utara_(rangka_54,90_m,_panel_6,10_m)__bantalan",
+   "Jembatan_Kretek_I_/_Bentang_3_-_Tengah-utara_(rangka_54,90_m,_panel_6,10_m)__baut",
+   "Jembatan_Kretek_I_/_Bentang_3_-_Tengah-utara_(rangka_54,90_m,_panel_6,10_m)__beton",
+   "Jembatan_Kretek_I_/_Bentang_3_-_Tengah-utara_(rangka_54,90_m,_panel_6,10_m)__hitam",
+   "Jembatan_Kretek_I_/_Bentang_3_-_Tengah-utara_(rangka_54,90_m,_panel_6,10_m)__kerb",
+   "Jembatan_Kretek_I_/_Bentang_3_-_Tengah-utara_(rangka_54,90_m,_panel_6,10_m)__putih"
+  ],
+  "Jembatan_Kretek_I_/_Bentang_4_-_Utara_(rangka_53,40_m,_panel_5,93_m)": [
+   "Jembatan_Kretek_I_/_Bentang_4_-_Utara_(rangka_53,40_m,_panel_5,93_m)__aspal",
+   "Jembatan_Kretek_I_/_Bentang_4_-_Utara_(rangka_53,40_m,_panel_5,93_m)__baja",
+   "Jembatan_Kretek_I_/_Bentang_4_-_Utara_(rangka_53,40_m,_panel_5,93_m)__baja_bawah",
+   "Jembatan_Kretek_I_/_Bentang_4_-_Utara_(rangka_53,40_m,_panel_5,93_m)__bantalan",
+   "Jembatan_Kretek_I_/_Bentang_4_-_Utara_(rangka_53,40_m,_panel_5,93_m)__baut",
+   "Jembatan_Kretek_I_/_Bentang_4_-_Utara_(rangka_53,40_m,_panel_5,93_m)__beton",
+   "Jembatan_Kretek_I_/_Bentang_4_-_Utara_(rangka_53,40_m,_panel_5,93_m)__hitam",
+   "Jembatan_Kretek_I_/_Bentang_4_-_Utara_(rangka_53,40_m,_panel_5,93_m)__kerb",
+   "Jembatan_Kretek_I_/_Bentang_4_-_Utara_(rangka_53,40_m,_panel_5,93_m)__putih"
+  ],
+  "Jembatan_Kretek_I_/_Marka_jalan": [
+   "Jembatan_Kretek_I_/_Marka_jalan__marka_kuning",
+   "Jembatan_Kretek_I_/_Marka_jalan__marka_putih"
+  ],
+  "Jembatan_Kretek_I_/_Oprit_Selatan": [
+   "Jembatan_Kretek_I_/_Oprit_Selatan__aspal",
+   "Jembatan_Kretek_I_/_Oprit_Selatan__bahu",
+   "Jembatan_Kretek_I_/_Oprit_Selatan__guardrail",
+   "Jembatan_Kretek_I_/_Oprit_Selatan__marka_putih"
+  ],
+  "Jembatan_Kretek_I_/_Oprit_Utara": [
+   "Jembatan_Kretek_I_/_Oprit_Utara__aspal",
+   "Jembatan_Kretek_I_/_Oprit_Utara__bahu",
+   "Jembatan_Kretek_I_/_Oprit_Utara__guardrail",
+   "Jembatan_Kretek_I_/_Oprit_Utara__marka_putih"
+  ],
+  "Jembatan_Kretek_I_/_Pilar_P1": [
+   "Jembatan_Kretek_I_/_Pilar_P1__beton_putih"
+  ],
+  "Jembatan_Kretek_I_/_Pilar_P2": [
+   "Jembatan_Kretek_I_/_Pilar_P2__beton_putih"
+  ],
+  "Jembatan_Kretek_I_/_Pilar_P3": [
+   "Jembatan_Kretek_I_/_Pilar_P3__beton_putih"
+  ],
+  "Jembatan_Kretek_I_/_Railing_pipa_merah": [
+   "Jembatan_Kretek_I_/_Railing_pipa_merah__merah"
+  ],
+  "Jembatan_Kretek_I_/_Rambu_Selatan": [
+   "Jembatan_Kretek_I_/_Rambu_Selatan__rambu",
+   "Jembatan_Kretek_I_/_Rambu_Selatan__tiang"
+  ],
+  "Jembatan_Kretek_I_/_Rambu_Utara": [
+   "Jembatan_Kretek_I_/_Rambu_Utara__rambu",
+   "Jembatan_Kretek_I_/_Rambu_Utara__tiang"
+  ],
+  "Jembatan_Kretek_I_/_Siar_muai": [
+   "Jembatan_Kretek_I_/_Siar_muai__sambungan"
+  ],
+  "Lingkungan_/_Dasar_sungai": [
+   "Lingkungan_/_Dasar_sungai__lumpur"
+  ],
+  "Lingkungan_/_Muka_air_sungai": [
+   "Lingkungan_/_Muka_air_sungai__air"
+  ],
+  "Lingkungan_/_Tebing_selatan": [
+   "Lingkungan_/_Tebing_selatan__tanah"
+  ],
+  "Lingkungan_/_Tebing_utara": [
+   "Lingkungan_/_Tebing_utara__tanah"
+  ]
+ }
+}

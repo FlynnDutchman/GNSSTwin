@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+ASH701933A_M    SNOW                                        TYPE / SERIAL NO    
+FIELD               NGS                      2    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+      0.46     -0.73     89.24                              NORTH / EAST / UP   
+   NOAZI    0.00    0.07   -0.51   -1.54   -2.94   -4.43   -5.98   -7.21   -8.20   -8.54   -8.38   -7.72   -6.36   -4.38   -1.71    1.76    6.13
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+     -0.39      0.44    116.95                              NORTH / EAST / UP   
+   NOAZI    0.00   -2.53   -4.01   -4.68   -5.09   -5.38   -5.70   -6.07   -6.62   -7.12   -7.56   -7.66   -7.13   -5.93   -3.73   -0.13    5.52
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

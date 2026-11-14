@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+LEIAT202+GP     NONE                                        TYPE / SERIAL NO    
+CONVERTED           TUM                      1    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM igs_01.pcv                                   COMMENT             
+   G01                                                      START OF FREQUENCY  
+      5.46      1.37     31.04                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.23   -0.51   -0.24    0.16   -0.23   -1.38   -2.21   -2.00   -1.54   -1.48   -1.82   -1.66   -0.88    0.29    2.36    6.33
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+      3.11     -5.86     34.15                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.33   -1.11   -1.88   -2.39   -2.78   -3.30   -4.07   -4.82   -5.22   -5.06   -4.16   -3.13   -2.33   -1.93   -1.33    0.22
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

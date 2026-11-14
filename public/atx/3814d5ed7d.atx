@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+MPL_WAAS_2225NW NONE                                        TYPE / SERIAL NO    
+FIELD               NGS                      2    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+      0.86     -4.03    444.44                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.53   -0.81   -0.84   -0.84   -0.73   -0.68   -0.61   -0.70   -0.74   -0.88   -1.22   -1.76   -2.58   -3.71   -4.84   -5.97
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+     -1.09     -1.06    457.05                              NORTH / EAST / UP   
+   NOAZI    0.00   -2.53   -3.31   -2.88   -1.79   -0.58    0.50    1.23    1.48    1.08    0.34   -0.86   -2.23   -3.73   -5.03   -5.73   -5.18
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

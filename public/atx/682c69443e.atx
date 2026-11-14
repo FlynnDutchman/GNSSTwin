@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+LEISR399_INTA   NONE                                        TYPE / SERIAL NO    
+FIELD               NGS                      2    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+      3.66      0.87    110.24                              NORTH / EAST / UP   
+   NOAZI    0.00    0.17    0.29    0.16   -0.14   -0.43   -0.68   -0.81   -0.80   -0.64   -0.28    0.18    0.54    0.72    0.99    0.76    0.53
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+      2.11     -1.76    114.35                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.13   -0.31   -0.58   -0.79   -1.18   -1.60   -1.97   -2.42   -2.72   -2.86   -2.66   -2.23   -1.53   -0.73    0.37    1.92
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

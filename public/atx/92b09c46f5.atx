@@ -1,0 +1,13 @@
+                                                            START OF ANTENNA    
+NOV501+CR       NONE                                        TYPE / SERIAL NO    
+FIELD               NGS                      3    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     1                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+     -0.34      1.57     78.84                              NORTH / EAST / UP   
+   NOAZI    0.00    0.17    0.19    0.06   -0.34   -0.83   -1.48   -2.11   -2.50   -2.84   -2.88   -2.62   -2.26   -1.48   -0.31    1.46    4.03
+   G01                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

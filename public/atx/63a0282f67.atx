@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+MAC4647942      MMAC                                        TYPE / SERIAL NO    
+FIELD               NGS                      1    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+     -0.74      2.27    121.44                              NORTH / EAST / UP   
+   NOAZI    0.00   -4.53   -4.91   -2.74    0.76    4.77    8.32   10.99   12.40   12.36   11.02    8.28    4.74    0.82   -2.41   -3.94   -2.57
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+      0.21      2.64     93.55                              NORTH / EAST / UP   
+   NOAZI    0.00   -3.53   -4.21   -3.08   -1.09    1.12    3.00    4.23    4.48    3.98    2.74    1.24   -0.23   -1.23   -0.83    1.57    7.42
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

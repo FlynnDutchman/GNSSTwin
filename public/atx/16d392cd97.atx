@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+LEIAT504GG      SCIT                                        TYPE / SERIAL NO    
+FIELD               NGS                      2    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+      1.76      2.47     88.44                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.83   -1.81   -3.14   -4.64   -6.13   -7.58   -8.71   -9.50   -9.74   -9.48   -8.82   -7.66   -5.98   -3.71   -0.84    2.83
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+     -0.19      0.84    117.45                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.13   -0.41   -0.98   -1.59   -2.38   -3.20   -4.07   -4.72   -5.22   -5.26   -4.96   -4.03   -2.73   -1.03    1.07    3.82
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

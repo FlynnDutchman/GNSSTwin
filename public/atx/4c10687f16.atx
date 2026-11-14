@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+JPSODYSSEY_I    NONE                                        TYPE / SERIAL NO    
+FIELD               NGS                      1    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+      1.06     -2.43     70.34                              NORTH / EAST / UP   
+   NOAZI    0.00    0.47    0.79    0.96    0.96    0.87    0.62    0.49    0.30    0.16    0.22    0.38    0.54    0.72    1.09    1.66    2.73
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+     -0.59     -2.36     81.25                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.03   -0.01    0.02    0.01    0.02    0.00   -0.07   -0.12   -0.22   -0.16    0.04    0.17    0.17   -0.03   -0.63   -1.48
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

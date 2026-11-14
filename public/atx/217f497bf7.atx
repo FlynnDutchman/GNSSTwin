@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+TPSLEGANT3_UHF  NONE                                        TYPE / SERIAL NO    
+FIELD               NGS                      3    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+     -0.04      0.07     95.94                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.13   -0.11   -0.04   -0.04   -0.03   -0.08   -0.01    0.10    0.36    0.52    0.78    0.84    0.72    0.39    0.06   -0.37
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+     -0.29     -0.36    104.95                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.63   -1.01   -1.18   -1.19   -1.18   -1.20   -1.27   -1.42   -1.52   -1.56   -1.46   -1.33   -1.13   -1.03   -0.93   -0.78
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

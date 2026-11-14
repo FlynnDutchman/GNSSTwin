@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+ASH701941.A     NONE                                        TYPE / SERIAL NO    
+FIELD               NGS                      4    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+      0.46     -0.43     89.84                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.53   -1.41   -2.44   -3.64   -4.93   -6.18   -7.21   -7.90   -8.14   -7.98   -7.42   -6.26   -4.68   -2.51    0.46    4.23
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+     -0.59     -0.46    119.05                              NORTH / EAST / UP   
+   NOAZI    0.00   -2.33   -3.81   -4.58   -5.09   -5.48   -5.90   -6.37   -6.92   -7.42   -7.76   -7.76   -7.23   -6.03   -4.03   -0.83    4.02
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

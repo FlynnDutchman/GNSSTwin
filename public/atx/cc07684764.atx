@@ -1,0 +1,17 @@
+                                                            START OF ANTENNA    
+TRM27947.00-GP  NONE                                        TYPE / SERIAL NO    
+FIELD               NGS                      1    29-JAN-17 METH / BY / # / DATE
+     0.0                                                    DAZI                
+     0.0  80.0   5.0                                        ZEN1 / ZEN2 / DZEN  
+     2                                                      # OF FREQUENCIES    
+IGS14_2134                                                  SINEX CODE          
+CONVERTED FROM RELATIVE NGS ANTENNA CALIBRATIONS            COMMENT             
+   G01                                                      START OF FREQUENCY  
+      4.06     -0.43     73.54                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.53   -0.81   -1.14   -1.44   -1.73   -2.08   -2.31   -2.60   -2.74   -2.78   -2.62   -2.46   -2.08   -1.31   -0.04    2.03
+   G01                                                      END OF FREQUENCY    
+   G02                                                      START OF FREQUENCY  
+     -1.69      1.44     87.25                              NORTH / EAST / UP   
+   NOAZI    0.00   -0.63   -1.21   -1.68   -2.19   -2.68   -3.20   -3.57   -4.02   -4.22   -4.36   -4.26   -3.93   -3.63   -3.43   -3.33   -3.28
+   G02                                                      END OF FREQUENCY    
+                                                            END OF ANTENNA      

@@ -1,0 +1,427 @@
+     1.4            M                                       ANTEX VERSION / SYST
+A                                                           PCV TYPE / REFANT   
+########################################################### COMMENT             
+General hint for satellite antenna corrections:             COMMENT             
+   All values in this file refer to an IGS-specific axis    COMMENT             
+   convention which differs from manufacturer               COMMENT             
+   specifications for certain satellite types. The IGS      COMMENT             
+   convention allows for a uniform description of the       COMMENT             
+   spacecraft attitude for all satellites applying a yaw-   COMMENT             
+   steering attitude control. Detailed definitions are      COMMENT             
+   provided in Montenbruck et al. (2015).                   COMMENT             
+                                                            COMMENT             
+GPS satellite antenna corrections:                          COMMENT             
+  - z-offsets:                                              COMMENT             
+    + satellite-specific                                    COMMENT             
+    + based on reprocessed (1994-2014) and operational      COMMENT             
+      (2015-2016) AC SINEX files                            COMMENT             
+    + weighted mean of seven ACs (CODE, ESA, GFZ, JPL, MIT, COMMENT             
+      NRCan, ULR)                                           COMMENT             
+    + solutions aligned to ITRF2014                         COMMENT             
+    + trend-corrected to epoch 2010.0                       COMMENT             
+    + analyzed and combined by IGN and TUM                  COMMENT             
+    + L1 and L2 set to the results for the ionosphere-free  COMMENT             
+      linear combination                                    COMMENT             
+    + block-specific mean values for historical satellites  COMMENT             
+      (active prior to 1994)                                COMMENT             
+  - phase center variations:                                COMMENT             
+    + block-specific                                        COMMENT             
+    + purely nadir-dependent (no azimuth-dependence)        COMMENT             
+    + maximum nadir angle: 14 degrees (Block I), 17 degrees COMMENT             
+      (Block II/IIA/IIR-A/IIR-B/IIR-M/IIF)                  COMMENT             
+    + adopted from igs05.atx                                COMMENT             
+    + solutions aligned to IGb00                            COMMENT             
+    + unweighted mean of two ACs (GFZ, TUM)                 COMMENT             
+    + L1 and L2 set to the results for the ionosphere-free  COMMENT             
+      linear combination                                    COMMENT             
+    + Block IIF: adopted from igs08.atx, solutions aligned  COMMENT             
+      to IGS08, unweighted mean of CODE and ESOC            COMMENT             
+    + extension for nadir angles beyond 14 degrees based on COMMENT             
+      LEO data from 2009 analyzed by CODE                   COMMENT             
+  - x- and y-offsets:                                       COMMENT             
+    + block-specific (except for Block IIR)                 COMMENT             
+    + based on manufacturer information                     COMMENT             
+    + satellite-specific corrections from pre-flight        COMMENT             
+      calibrations for Block IIR (Dilssner et al., 2016:    COMMENT             
+      Evaluating the pre-flight GPS Block IIR/IIR-M antenna COMMENT             
+      phase pattern measurements, IGS Workshop 2016)        COMMENT             
+                                                            COMMENT             
+GLONASS satellite antenna corrections:                      COMMENT             
+  - z-offsets:                                              COMMENT             
+    + satellite-specific                                    COMMENT             
+    + based on reprocessed and operational CODE (2002-2016) COMMENT             
+      and ESOC (2009-2016) solutions                        COMMENT             
+    + solutions aligned to ITRF2014                         COMMENT             
+    + L1 and L2 set to the results for the ionosphere-free  COMMENT             
+      linear combination                                    COMMENT             
+    + block-specific mean values for historical satellites  COMMENT             
+      (active between 1998 and 2002)                        COMMENT             
+  - phase center variations:                                COMMENT             
+    + block-specific (common parameters for GLONASS and     COMMENT             
+      GLONASS-M), satellite-specific values for R714        COMMENT             
+    + purely nadir-dependent (no azimuth-dependence)        COMMENT             
+    + maximum nadir angle: 15 degrees                       COMMENT             
+    + adopted from igs08.atx                                COMMENT             
+    + solutions aligned to ITRF2008                         COMMENT             
+    + unweighted mean of two ACs (CODE, ESOC)               COMMENT             
+    + L1 and L2 set to the results for the ionosphere-free  COMMENT             
+      linear combination                                    COMMENT             
+  - x- and y-offsets:                                       COMMENT             
+    + block-specific                                        COMMENT             
+    + based on manufacturer information                     COMMENT             
+                                                            COMMENT             
+GALILEO-0A/B satellite antenna corrections:                 COMMENT             
+  - x-, y- and z-offsets:                                   COMMENT             
+    + satellite- and frequency-specific values based        COMMENT             
+      on ESA information (Zandbergen and Navarro, 2008)     COMMENT             
+  - phase center variations:                                COMMENT             
+    + wild card values                                      COMMENT             
+                                                            COMMENT             
+GALILEO-1 and GALILEO-2 satellite antenna calibrations      COMMENT             
+  - PCO and PV values generated from ARP-related            COMMENT             
+    information in ANTEX_GAL_FOC_IOV.atx (GSA, 2016a) and   COMMENT             
+    CoM/ARP coordinates (GSA, 2016b) as published by the    COMMENT             
+    GSA                                                     COMMENT             
+  - Derived from satellite antenna ground measurements      COMMENT             
+    H(f,dir) and ideal Galileo SISICD signal-modulations    COMMENT             
+  - PCOs refer to the center-of-mass in accord with IGS     COMMENT             
+    ANTEX conventions                                       COMMENT             
+  - Carrier-phase patterns refer to the                     COMMENT             
+    carrier-phase-center and IGS axes conventions           COMMENT             
+  - Signals: E5a,E5b,E5(AltBOC),E6,E1                       COMMENT             
+             E5(AltBOC) from E5AQ and E5BQ                  COMMENT             
+  - Satellites: IOV-PFM,IOV-FM2,IOV-FM3,IOV-FM4             COMMENT             
+                FOC-1 - FOC-14                              COMMENT             
+  - Preliminary PCO values (no PV) for FOC-15 to FOC-18     COMMENT             
+    using mean values of FOC-3 to FOC-14                    COMMENT             
+                                                            COMMENT             
+BeiDou satellite antenna corrections:                       COMMENT             
+  - x-, y- and z-offsets:                                   COMMENT             
+    + block-specific                                        COMMENT             
+    + conventional MGEX values                              COMMENT             
+    + duplicate entries for C01 and C02 to support the use  COMMENT             
+      of RINEX 3.01 and 3.02 observation codes of B1        COMMENT             
+  - phase center variations:                                COMMENT             
+    + wild card values                                      COMMENT             
+    + maximum nadir angle: 14 degrees (BEIDOU-2M),          COMMENT             
+      9 degrees (BEIDOU-2G/I)                               COMMENT             
+                                                            COMMENT             
+QZSS satellite antenna calibrations                         COMMENT             
+  - PCO and PV values generated from S/C-origin related     COMMENT             
+    phase center and center-of-mass information published   COMMENT             
+    by the CAO (CAO, 2017)                                  COMMENT             
+  - PCOs refer to the center-of-mass in accordance with IGS COMMENT             
+    ANTEX conventions                                       COMMENT             
+  - Carrier-phase patterns refer to the                     COMMENT             
+    carrier-phase-center and IGS axes                       COMMENT             
+  - PV information for QZS-1 is presently unavailable       COMMENT             
+  - Signals: J1, J2, J5, J6                                 COMMENT             
+                                                            COMMENT             
+IRNSS satellite antenna corrections:                        COMMENT             
+  - x-, y- and z-offsets:                                   COMMENT             
+    + block-specific                                        COMMENT             
+    + based on ISRO information (provided by A.S. Ganeshan) COMMENT             
+  - phase center variations:                                COMMENT             
+    + wild card values                                      COMMENT             
+    + maximum nadir angle: 14 degrees (taking into account  COMMENT             
+      the off-nadir pointing navigation antenna)            COMMENT             
+                                                            COMMENT             
+Receiver antenna corrections:                               COMMENT             
+  - absolute elevation- and azimuth-dependent corrections   COMMENT             
+    from robot calibrations in the field performed by       COMMENT             
+    Geo++ GmbH for GPS and, to some extent, for GLONASS     COMMENT             
+    (http://www.geopp.de/gnpcvdb)                           COMMENT             
+  - purely elevation-dependent corrections from relative    COMMENT             
+    field calibrations performed by NGS and/or other        COMMENT             
+    institutions; converted to absolute corrections by      COMMENT             
+    adding                                                  COMMENT             
+      d_offset (AOAD/M_T_abs - AOAD/M_T_rel)  and           COMMENT             
+      d_pattern (AOAD/M_T_abs - AOAD/M_T_rel)               COMMENT             
+    (http://www.ngs.noaa.gov/ANTCAL,                        COMMENT             
+     ftp://igs.org/pub/station/general/igs_01.pcv)          COMMENT             
+  - IMPORTANT hints:                                        COMMENT             
+    If no corrections are available for a combination of an COMMENT             
+    antenna with one specific radome, the values for the    COMMENT             
+    corresponding antenna without a radome (radome code:    COMMENT             
+    NONE) are used within the IGS.                          COMMENT             
+    If no corrections for the GLONASS frequencies are       COMMENT             
+    available, the values for the GPS frequencies are used  COMMENT             
+    within the IGS instead.                                 COMMENT             
+                                                            COMMENT             
+References:                                                 COMMENT             
+  Schmid R, Dach R, Collilieux X, Jaeggi A, Schmitz M,      COMMENT             
+    Dilssner F (2016) Absolute IGS antenna phase center     COMMENT             
+    model igs08.atx: status and potential improvements.     COMMENT             
+    J Geod 90(4): 343-364, doi: 10.1007/s00190-015-0876-3   COMMENT             
+  Rothacher M, Schmid R (2010) ANTEX: The Antenna Exchange  COMMENT             
+    Format, Version 1.4 (ftp://igs.org/pub/station/general/ COMMENT             
+    antex14.txt)                                            COMMENT             
+  CAO (2017) QZS 1-4 Satellite Information                  COMMENT             
+    URL http://qzss.go.jp/en/technical/qzssinfo/index.html  COMMENT             
+        (accessed 2017/01/15)                               COMMENT             
+  Montenbruck O, Schmid R, Mercier F, Steigenberger P, Noll COMMENT             
+    C, Fatkulin R, Kogure S, Ganeshan AS (2015) GNSS        COMMENT             
+    satellite geometry and attitude models. Adv Space Res   COMMENT             
+    56(6): 1015-1029, doi: 10.1016/j.asr.2015.06.019        COMMENT             
+  GSA (2016a) Galileo IOV and FOC  Satellite Antenna        COMMENT             
+    Calibrations, SINEX code GSAT_1934                      COMMENT             
+    URL https://www.gsc-europa.eu/sites/default/files/      COMMENT             
+        sites/all/files/ANTEX_GAL_FOC_IOV.atx               COMMENT             
+        (accessed 18/01/26)                                 COMMENT             
+  GSA (2016b) Galileo IOV and FOC satellite metadata        COMMENT             
+    URL https://www.gsc-europa.eu/support-to-developers/    COMMENT             
+        galileo-iov-satellite-metadata (accessed 18/01/26)  COMMENT             
+  Zandbergen R, Navarro D (2008) Specification of Galileo   COMMENT             
+    and GIOVE Space Segment properties relevant for         COMMENT             
+    Laser Ranging, ESA-EUING-TN/10206, Issue 3.2,           COMMENT             
+    08/05/2008, Galileo Project Office, ESA, Noordwijk      COMMENT             
+                                                            COMMENT             
+Changes:                                                    COMMENT             
+  week 2134  Added R805 (R11)                               COMMENT             
+             Decommission date  R805 (R25), R853 (R11)      COMMENT             
+             Added LEICGA100       NONE                     COMMENT             
+  week 2132  Added R805 (R25)                               COMMENT             
+  week 2131  Added G077 (G14)                               COMMENT             
+             Decommission date: G041 (G14)                  COMMENT             
+             Added CNTAT600        CNTS                     COMMENT             
+                   HGGCYH8372      HGGS                     COMMENT             
+                   LEIFLX100       NONE                     COMMENT             
+                   TWIVSP6037L     NONE                     COMMENT             
+  week 2129  Added EML_REACH_RS2   NONE                     COMMENT             
+                   STXS900A        NONE                     COMMENT             
+                   TIAPENG6J2      NONE                     COMMENT             
+                   TRMR12I         NONE                     COMMENT             
+  week 2118  Added R735 (R22)                               COMMENT             
+             Decommission date: R731 (R22)                  COMMENT             
+             Added FOIA90          NONE                     COMMENT             
+                   HEMS631         NONE                     COMMENT             
+  week 2114  Added G076 (G23), C230 (C61)                   COMMENT             
+             Decommission date: G060 (G23)                  COMMENT             
+  week 2113  Corrected entries for TWIVC6050                COMMENT             
+             Renamed antenna                                COMMENT             
+               CNTT300+ to CNTT300PLUS                      COMMENT             
+             Radome changed from CNTS to NONE for           COMMENT             
+               CNTAT340, CNTT30, CNTT300, CNTT300PLUS       COMMENT             
+  week 2112  Added C229 (C60)                               COMMENT             
+             Updated PCO and PV of J003 (J07)               COMMENT             
+                   TWIVC6050       NONE                     COMMENT             
+                   TWIVC6050       SCIS                     COMMENT             
+                   TWIVC6050       SCIT                     COMMENT             
+  week 2108  Added STXS700A        NONE                     COMMENT             
+                   STXS990A        NONE                     COMMENT             
+  week 2101  Added R860 (R24)                               COMMENT             
+             Decommission date: R735 (R24)                  COMMENT             
+  week 2097  Added G075 (G18)                               COMMENT             
+             Decommission date: G034 (G18)                  COMMENT             
+  week 2091  Added C225 (C44), C226 (C43), C227 (C41)       COMMENT             
+                   C228 (C42)                               COMMENT             
+             Added GMXZENITH16     NONE                     COMMENT             
+                   TRMR12          NONE                     COMMENT             
+             Withdrawn TRM115000.00+S   SCIT                COMMENT             
+  week 2086  Added R859 (R04)                               COMMENT             
+             Decommission date: R742 (R04)                  COMMENT             
+             Added SLGAT45101CP    SLGZ                     COMMENT             
+  week 2082  PRN/SVN assignment modified:                   COMMENT             
+               C45 (C222 to C223)                           COMMENT             
+               C46 (C223 to C222)                           COMMENT             
+             Added AERAT1675_542E  NEVE                     COMMENT             
+                   JAVTRIUMPH_3A   NONE                     COMMENT             
+  week 2080  Added C224 (C40)                               COMMENT             
+             Added AOAD/M_T_RFI_T  NONE                     COMMENT             
+                   AOAD/M_T_RFI_T  SCIS                     COMMENT             
+  week 2076  Added G074 (G04), R716 (R27), C104 (C59),      COMMENT             
+                   C020 (C18),C220 (C38), C221 (C39),       COMMENT             
+                   C222 (C45), C223 (C46)                   COMMENT             
+             Decommission date: G036 (G04), C104 (C18)      COMMENT             
+  week 2074  Added R723 (R10)                               COMMENT             
+             Decommission date: R717 (R10)                  COMMENT             
+  week 2073  Added CNTT30          CNTS                     COMMENT             
+                   CNTT300+        CNTS                     COMMENT             
+                   CNTAT340        CNTS                     COMMENT             
+  week 2072  Added GINCYF90        NONE                     COMMENT             
+                   TRM59800.99     NONE                     COMMENT             
+                   TRM59800.99     SCIT                     COMMENT             
+  week 2070  Modified radom from NONE to CNTS:              COMMENT             
+                   CNTT300         CNTS                     COMMENT             
+                   CNTAT350        CNTS                     COMMENT             
+                   CNTAT500        CNTS                     COMMENT             
+  week 2062  Added G036 (G04)                               COMMENT             
+             Decommission date: G074 (G04)                  COMMENT             
+  week 2061  Adjusted ending time for C104 (C32)            COMMENT             
+             Added CNTT300         NONE                     COMMENT             
+                   CNTAT350        NONE                     COMMENT             
+                   CNTAT500        NONE                     COMMENT             
+  week 2060  Added R858 (R12)                               COMMENT             
+             Decommission date: 723 (R12)                   COMMENT             
+             Updated PCO/PV for E215-E222 with              COMMENT             
+             chamber calibrations                           COMMENT             
+             Adjusted starting and endig times: BEIDOU      COMMENT             
+             Added JAVGRANT_G5T+GP JVSD                     COMMENT             
+                   JAV_GRANT-G3T+G JVSD                     COMMENT             
+                   STXSA1500       STXG                     COMMENT             
+                   STXSA1800       STXS                     COMMENT             
+                   TRM115000.00+S  SCIT                     COMMENT             
+                   TRM159800.00    SCIT                     COMMENT             
+  week 2056  Update of Beidou-2 PCOs                        COMMENT             
+             Beidou-3 satellites added                      COMMENT             
+             Added C018 (C03), C101 (C31), C102 (C19,C33),  COMMENT             
+                   C102 (C57), C103 (C28,C58), C103 (C58),  COMMENT             
+                   C104 (C32), C201 (C19,C47), C202 (C20),  COMMENT             
+                   C203 (C27), C204 (C48), C205 (C22),      COMMENT             
+                   C206 (C21), C207 (C29), C208 (C30),      COMMENT             
+                   C209 (C23), C210 (C24), C211 (C26),      COMMENT             
+                   C212 (C25), C214 (C33), C215 (C35),      COMMENT             
+                   C216 (C34), C217 (C59), C218 (C36),      COMMENT             
+                   C219 (C37)                               COMMENT             
+             Added TWIVC6150       NONE                     COMMENT             
+                   TWIVC6150       SCIS                     COMMENT             
+  week 2045  Added GMXZENITH40     NONE                     COMMENT             
+                   LEIGG04         NONE                     COMMENT             
+  week 2038  Updated PCO and PV for G074 (G04)              COMMENT             
+             Added HITAT45101CP    HITZ                     COMMENT             
+  week 2035  Added G074 (G04)                               COMMENT             
+             Decommision date: G036 (G04)                   COMMENT             
+  week 2032  Added Decommision date: C001 (C30)             COMMENT             
+  week 2031  Added LEIICG70        NONE                     COMMENT             
+                   MVECR152GNSSA   NONE                     COMMENT             
+                   STXS900         NONE                     COMMENT             
+  week 2030  Added ARFAS13DFS      ARFS                     COMMENT             
+                   TRM59800.00C    NONE                     COMMENT             
+  week 2029  Added R857 (R15)                               COMMENT             
+             Decommision date: R716 (R15)                   COMMENT             
+             Added JAV_RINGANT_G3T JAVD                     COMMENT             
+                   JAVRINGANT_G5T  JAVD                     COMMENT             
+                   JAVTRIUMPH_2A+P JVSD                     COMMENT             
+                   TPSHIPER_VR     NONE                     COMMENT             
+                   TRMR10-2        NONE                     COMMENT             
+  week 2022  Preliminary PCO and PV for                     COMMENT             
+             FOC-19 to FOC-22                               COMMENT             
+             Added G036 (G04), E219 (E36), E220 (E13)       COMMENT             
+                   E221 (E15), E222 (E33)                   COMMENT             
+             Decommision date: G049 (G04)                   COMMENT             
+             Added TRMSPS986       NONE                     COMMENT             
+  week 2017  Added C018 (C17), C019 (C16)                   COMMENT             
+             Corrected commision date: R856 (R05)           COMMENT             
+             Corrected decommision date: R734 (R05)         COMMENT             
+  week 2013  Added R856 (R05)                               COMMENT             
+             Decommision date: R734 (R05)                   COMMENT             
+  week 2000  Added LEIGG04PLUS     NONE                     COMMENT             
+                   NOV850          NONE                     COMMENT             
+                   STXS800         NONE                     COMMENT             
+                   STXS800A        NONE                     COMMENT             
+  week 1992  Added G034 (G18)                               COMMENT             
+             Decommision date: G054 (G18)                   COMMENT             
+  week 1986  Chamber calibrated PCO and PCV for             COMMENT             
+             Galileo FOC satellites:                        COMMENT             
+             FOC-1 to FOC-14                                COMMENT             
+             Added E215 (E21), E216 (E25), E217 (E27),      COMMENT             
+                   E218 (E31)                               COMMENT             
+  week 1984  Calibrated PCO and PV for QZSS satellites:     COMMENT             
+             QZS-1,QZS-2,QZS-3,QZS-4                        COMMENT             
+             Added J002 (J02), J003 (J07), J004 (J03)       COMMENT             
+             Added JAVTRIUMPH_2A+P JVGR                     COMMENT             
+                   TRM159800.00    NONE                     COMMENT             
+                   TRM159800.00    SCIS                     COMMENT             
+                   TRM159900.00    NONE                     COMMENT             
+                   TRM159900.00    SCIS                     COMMENT             
+  week 1977  Added G049 (G04)                               COMMENT             
+             Decommision date: G036 (G04)                   COMMENT             
+             Added LEIGS18         NONE                     COMMENT             
+  week 1973  Added R852 (R14), 801 (R26)                    COMMENT             
+             Decommision date: R801(R14)                    COMMENT             
+             Added HXCCGX601A      HXCS                     COMMENT             
+                   SEPALTUS_NR3    NONE                     COMMENT             
+  week 1972  Chamber calibrated PCO and PCV for             COMMENT             
+             Galileo IOV satellites:                        COMMENT             
+             IOV-PFM,IOV-FM2,IOV-FM3,IOV-FM4                COMMENT             
+             Added IGAIG8          NONE                     COMMENT             
+  week 1967  Added R801 (R14)                               COMMENT             
+             Decommision date: R715 (R14), R801(R26)        COMMENT             
+  week 1958  Added G036 (G04)                               COMMENT             
+             Decommission date: G038 (G04)                  COMMENT             
+             Added SJTTL111        NONE                     COMMENT             
+  week 1949  Added G038 (G04)                               COMMENT             
+             Decommission date: G049 (G04)                  COMMENT             
+  week 1943  Added STXS9I          NONE                     COMMENT             
+  week 1941  Added ARFAS1FS        ARFC                     COMMENT             
+                   SOKGCX3         NONE                     COMMENT             
+  week 1935  Added STHCR3-G3       STHC                     COMMENT             
+                   TWIVP6050_CONE  NONE                     COMMENT             
+                                                            COMMENT             
+Major changes w.r.t. igs08.atx:                             COMMENT             
+  - satellite antenna corrections consistent with ITRF2014/ COMMENT             
+    IGS14                                                   COMMENT             
+  - satellite antenna z-offsets based on the results of     COMMENT             
+    more ACs (GPS: 7 instead of 5, GLONASS: still 2)        COMMENT             
+  - satellite antenna z-offsets trend-corrected to epoch    COMMENT             
+    2010.0                                                  COMMENT             
+  - satellite-specific x- and y-offsets from pre-flight     COMMENT             
+    calibrations for the Block IIR satellites               COMMENT             
+  - type-specific robot-based receiver antenna corrections  COMMENT             
+    updated with results from recent individual antenna     COMMENT             
+    calibrations                                            COMMENT             
+  - conversion of relative receiver antenna corrections     COMMENT             
+    with updated AOAD/M_T values                            COMMENT             
+  - additional ROBOT calibrations:                          COMMENT             
+      AERAT2775_43    SPKE                                  COMMENT             
+      AOAD/M_T        DUTD                                  COMMENT             
+      ASH700936D_M    SCIS                                  COMMENT             
+      ASH700936E      SCIS                                  COMMENT             
+      ASH701073.1     NONE                                  COMMENT             
+      ASH701073.1     SCIS                                  COMMENT             
+      ASH701073.1     SNOW                                  COMMENT             
+      ASH701945C_M    SCIS                                  COMMENT             
+      ASH701945D_M    NONE                                  COMMENT             
+      ASH701945D_M    SCIS                                  COMMENT             
+      ASH701945E_M    SCIS                                  COMMENT             
+      ASH701945G_M    NONE                                  COMMENT             
+      ASH701945G_M    SCIS                                  COMMENT             
+      ASH701946.3     NONE                                  COMMENT             
+      TRM29659.00     UNAV                                  COMMENT             
+      TRM41249.00     SCIT                                  COMMENT             
+      TRM57971.00     TZGD                                  COMMENT             
+  - additional COPIED calibrations:                         COMMENT             
+      ASH700936F_C    SNOW                                  COMMENT             
+      ASH701945B_M    SCIS                                  COMMENT             
+  - updated ROBOT calibrations:                             COMMENT             
+      AOAD/M_T        NONE                                  COMMENT             
+      ASH700936C_M    SNOW                                  COMMENT             
+      ASH700936E      NONE                                  COMMENT             
+      ASH701945C_M    NONE                                  COMMENT             
+      JAVRINGANT_DM   NONE                                  COMMENT             
+      LEIAR10         NONE                                  COMMENT             
+      LEIAR20         LEIM                                  COMMENT             
+      LEIAR25         LEIT                                  COMMENT             
+      LEIAR25.R3      NONE                                  COMMENT             
+      LEIAR25.R3      LEIT                                  COMMENT             
+      LEIAR25.R4      NONE                                  COMMENT             
+      LEIAR25.R4      LEIT                                  COMMENT             
+      NOV702GG        NONE                                  COMMENT             
+      TPSCR.G5        TPSH                                  COMMENT             
+      TRM29659.00     NONE                                  COMMENT             
+      TRM29659.00     SCIS                                  COMMENT             
+      TRM57971.00     NONE                                  COMMENT             
+      TRM59800.00     NONE                                  COMMENT             
+      TRM59800.00     SCIS                                  COMMENT             
+  - updated COPIED calibrations:                            COMMENT             
+      AOAD/M_TA_NGS   NONE                                  COMMENT             
+      ASH700936A_M    NONE                                  COMMENT             
+      ASH700936E_C    NONE                                  COMMENT             
+      ASH700936F_C    NONE                                  COMMENT             
+      ASH701073.3     NONE                                  COMMENT             
+      ASH701945B_M    NONE                                  COMMENT             
+      ASH701946.2     NONE                                  COMMENT             
+      RNG80971.00     NONE                                  COMMENT             
+      TPSCR4          NONE                                  COMMENT             
+      TRM59800.80     NONE                                  COMMENT             
+      TRM59800.80     SCIS                                  COMMENT             
+  - additional GLONASS calibrations:                        COMMENT             
+      AOAD/M_T        NONE                                  COMMENT             
+      ASH700936C_M    SNOW                                  COMMENT             
+      ASH701945C_M    NONE                                  COMMENT             
+      TRM29659.00     SCIS                                  COMMENT             
+                                                            COMMENT             
+Compiled by Arturo Villiger (AIUB),                         COMMENT             
+  e-mail: arturo.villiger@aiub.unibe.ch                     COMMENT             
+########################################################### COMMENT             
+                                                            END OF HEADER       
