@@ -103,7 +103,7 @@ export function GempaPanel({ data, st, mode, onRun, setView, onSelect, skId, onP
           return (
             <button key={g.id} className={`row ${on ? "active" : ""}`} onClick={() => onPilih(g.id)} disabled={mode === "gempa" && !on}>
               <span className={`mag m${Math.min(7, Math.floor(g.mw_input))}`}>{angka(g.mw_input)}</span>
-              <span className="rt"><b>{g.nama.replace("Gempa ", "")}</b><small>{Math.abs(g.episenter.lat).toFixed(2)}° LS · {g.episenter.lon.toFixed(2)}° BT · {angka(g.jarak_episenter_km, 0)} km</small></span>
+              <span className="rt"><b>{g.nama.replace("Gempa ", "")} <span className="doy">DOY {g.doy}</span></b><small>{Math.abs(g.episenter.lat).toFixed(2)}° LS · {g.episenter.lon.toFixed(2)}° BT · {g.kedalaman_km} km dalam · {angka(g.jarak_episenter_km, 0)} km dari jembatan</small></span>
               <span className="rv"><span className="mono">{g.mmi_romawi} MMI</span></span>
             </button>
           );
@@ -111,7 +111,7 @@ export function GempaPanel({ data, st, mode, onRun, setView, onSelect, skId, onP
       </div>
 
       <div className="card hero">
-        <div className="hrow"><div><small className="eyebrow">{mode === "gempa" ? "REPLAY · " + m.sumber : "SKENARIO TERPILIH · " + m.sumber}</small><h2>M {angka(m.mw_input)}{m.mw_awal ? ` (awal ${angka(m.mw_awal)})` : ""}</h2></div>{st.aktif && <Badge status={st.worst} />}</div>
+        <div className="hrow"><div><small className="eyebrow">{mode === "gempa" ? "REPLAY · " + m.sumber : "SKENARIO TERPILIH · " + m.sumber}</small><h2>M {angka(m.mw_input)} · DOY {m.doy}</h2></div>{st.aktif && <Badge status={st.worst} />}</div>
         <div className="stats">
           <div><b>{m.mmi_romawi}</b><small>MMI di jembatan</small></div>
           <div><b>{angka(m.pga_g * 100, 1)}%g</b><small>PGA tanah</small></div>

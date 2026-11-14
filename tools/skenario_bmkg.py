@@ -10,7 +10,7 @@ Dampak di jembatan dihitung dari JARAK dan MAGNITUDO (bukan dikarang):
   geser statis  : sumber titik, u ≈ 0,5·M0 / (4π μ R²), M0 = 10^(1,5M+9,1) N·m, μ = 30 GPa
   respons dek   : percepatan dek = PGA situs × faktor dinamis (bentang tengah 2,2; bentang tepi 1,8)
   waktu tiba    : P = R/6,5 km/s, S = R/3,6 km/s
-Kalibrasi: gempa Pacitan 6 Feb 2026 (BMKG: M6,2 setelah pembaruan, kedalaman 58 km) → model memberi
+Kalibrasi: gempa Pacitan 6 Feb 2026 (BMKG: M6,4, kemudian 6,2; kedalaman 58 km) → model memberi
 MMI ≈ IV di Kretek; BMKG mencatat IV MMI di Bantul.
 
 Derau GNSS 1 Hz (dari uji data asli CPTS): ±0,5 cm horizontal, ±1,0 cm vertikal → deteksi bila PGD ≥ 1,5 cm (3σ).
@@ -26,15 +26,15 @@ aset = json.load(open(os.path.join(D, "aset_kretek1.json")))
 stasiun = json.load(open(os.path.join(D, "stasiun.json")))
 JLAT, JLON = aset["model"]["lat"] + 0.0011, aset["model"]["lon"] + 0.00001     # tengah jembatan
 
-# Katalog dari pengguna (BMKG). Kedalaman: Pacitan dari siaran pers BMKG; lainnya belum ada → asumsi 10 km (dangkal = kasus terburuk).
+# Katalog gempa BMKG 2026 (episenter, magnitudo, kedalaman, DOY) dari pengguna.
 KATALOG = [
-    dict(id="20261112", tanggal="12 November 2026", m=2.5, lat=-9.10, lon=110.34, utm=(427498, 8994080), h=10, h_sumber="asumsi"),
-    dict(id="20261109", tanggal="9 November 2026", m=1.7, lat=-8.26, lon=110.30, utm=(422878, 9086958), h=10, h_sumber="asumsi"),
-    dict(id="20261027", tanggal="27 Oktober 2026", m=5.1, lat=-9.47, lon=110.33, utm=(426473, 8953168), h=10, h_sumber="asumsi"),
-    dict(id="20260820", tanggal="20 Agustus 2026", m=3.5, lat=-7.88, lon=110.45, utm=(439354, 9128999), h=10, h_sumber="asumsi"),
-    dict(id="20260206", tanggal="6 Februari 2026", m=6.2, m_awal=6.4, lat=-8.98, lon=111.18, utm=(519784, 9007402), h=58, h_sumber="BMKG",
-         wib="01:06:10 WIB", catatan="BMKG memperbarui M6,4 → M6,2; IV MMI di Bantul, Sleman, Pacitan"),
-    dict(id="20260127", tanggal="27 Januari 2026", m=4.5, lat=-7.87, lon=110.49, utm=(443763, 9130111), h=10, h_sumber="asumsi"),
+    dict(id="20261112", tanggal="12 November 2026", doy=316, m=2.5, lat=-9.10, lon=110.34, utm=(427498, 8994080), h=10, h_sumber="BMKG"),
+    dict(id="20261109", tanggal="9 November 2026", doy=313, m=1.7, lat=-8.26, lon=110.30, utm=(422878, 9086958), h=21, h_sumber="BMKG"),
+    dict(id="20261027", tanggal="27 Oktober 2026", doy=300, m=5.1, lat=-9.47, lon=110.33, utm=(426473, 8953168), h=10, h_sumber="BMKG"),
+    dict(id="20260820", tanggal="20 Agustus 2026", doy=232, m=3.5, lat=-7.88, lon=110.45, utm=(439354, 9128999), h=21, h_sumber="BMKG"),
+    dict(id="20260206", tanggal="6 Februari 2026", doy=37, m=6.4, lat=-8.98, lon=111.18, utm=(519784, 9007402), h=58, h_sumber="BMKG",
+         wib="01:06:10 WIB", catatan="BMKG kemudian memperbarui menjadi M6,2; IV MMI di Bantul, Sleman, Pacitan"),
+    dict(id="20260127", tanggal="27 Januari 2026", doy=27, m=4.5, lat=-7.87, lon=110.49, utm=(443763, 9130111), h=11, h_sumber="BMKG"),
 ]
 
 
@@ -147,7 +147,7 @@ for ev in KATALOG:
                     else {"t": round(tS + 5), "tipe": "info", "teks": "Simpangan GNSS < 1,5 cm (di bawah derau): tidak terdeteksi InaCORS, terekam akselerometer"})
     hasil.append({
         "meta": {"id": ev["id"], "nama": f"Gempa {ev['tanggal']}", "sumber": f"BMKG · {ev['tanggal']}", "jenis": "gempa",
-                 "mw_input": m, "mw_awal": ev.get("m_awal"), "kedalaman_km": h, "kedalaman_sumber": ev["h_sumber"], "waktu_wib": ev.get("wib"),
+                 "mw_input": m, "mw_awal": ev.get("m_awal"), "doy": ev["doy"], "kedalaman_km": h, "kedalaman_sumber": ev["h_sumber"], "waktu_wib": ev.get("wib"),
                  "catatan_bmkg": ev.get("catatan"),
                  "episenter": {"lat": ev["lat"], "lon": ev["lon"], "utm49s_E": ev["utm"][0], "utm49s_N": ev["utm"][1]},
                  "jarak_episenter_km": round(repi, 1), "jarak_hiposenter_km": round(r, 1), "azimut_ke_jembatan": round(baz),
