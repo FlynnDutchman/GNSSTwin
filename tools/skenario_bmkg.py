@@ -34,6 +34,14 @@ JLAT, JLON = aset["model"]["lat"] + 0.0011, aset["model"]["lon"] + 0.00001     #
 
 # Katalog gempa BMKG 2026 (episenter, magnitudo, kedalaman, DOY) dari pengguna.
 KATALOG = [
+    # Skenario hipotetis Sesar Opak (bukan kejadian nyata). Dasar:
+    #  - Sesar Opak: sesar aktif ±45 km arah TL–BD, kemiringan ±60° ke timur, potensi Mw 6,6 (PuSGeN 2017),
+    #    melintasi Kec. Kretek, Pundong, Imogiri, Jetis, Pleret, Piyungan, Berbah, Prambanan (BMKG Sta. Geofisika Sleman 2023).
+    #  - Episenter = skenario terburuk yang dipakai BMKG Sta. Geofisika Sleman (7,88° LS, 110,41° BT, Mw 6,6).
+    #  - Kedalaman 10 km = hiposenter gempa Yogyakarta 2006 menurut USGS (Sulaeman dkk. 2008).
+    dict(id="opak66", jenis="hipotetis", nama="Skenario Sesar Opak (hipotetis)", tanggal="Skenario Sesar Opak", doy=None, m=6.6,
+         lat=-7.88, lon=110.41, utm=None, h=10, h_sumber="asumsi, setara gempa 2006 menurut USGS",
+         catatan="Hipotetis: Mw 6,6 = potensi maksimum Sesar Opak (PuSGeN 2017); episenter = skenario terburuk BMKG Sta. Geofisika Sleman"),
     dict(id="20261112", tanggal="12 November 2026", doy=316, m=2.5, lat=-9.10, lon=110.34, utm=(427498, 8994080), h=10, h_sumber="BMKG"),
     dict(id="20261109", tanggal="9 November 2026", doy=313, m=1.7, lat=-8.26, lon=110.30, utm=(422878, 9086958), h=21, h_sumber="BMKG"),
     dict(id="20261027", tanggal="27 Oktober 2026", doy=300, m=5.1, lat=-9.47, lon=110.33, utm=(426473, 8953168), h=10, h_sumber="BMKG"),
@@ -42,6 +50,12 @@ KATALOG = [
          wib="01:06:10 WIB", catatan="BMKG kemudian memperbarui menjadi M6,2; IV MMI di Bantul, Sleman, Pacitan"),
     dict(id="20260127", tanggal="27 Januari 2026", doy=27, m=4.5, lat=-7.87, lon=110.49, utm=(443763, 9130111), h=11, h_sumber="BMKG"),
 ]
+
+
+from pyproj import Transformer
+_UTM = Transformer.from_crs("EPSG:4326", "EPSG:32749", always_xy=True)
+for _e in KATALOG:
+    if _e.get("utm") is None: _e["utm"] = tuple(round(v) for v in _UTM.transform(_e["lon"], _e["lat"]))
 
 
 def jarak_km(a, b, c, d):
@@ -73,7 +87,7 @@ def gelombang(t, ts, dur, per):
 
 hasil = []
 for ev in KATALOG:
-    random.seed(int(ev["id"]))
+    random.seed(int(ev["id"]) if ev["id"].isdigit() else sum(map(ord, ev["id"])) * 7919)
     m, h = ev["m"], ev["h"]
     repi = jarak_km(ev["lat"], ev["lon"], JLAT, JLON); r = math.hypot(repi, h)
     baz = azimut(ev["lat"], ev["lon"], JLAT, JLON)                     # arah rambat episenter → jembatan
@@ -152,7 +166,9 @@ for ev in KATALOG:
     kejadian.append({"t": det[0][0], "tipe": "deteksi", "teks": f"{det[0][1]} mendeteksi simpangan {det[0][2]:.1f} cm"} if det
                     else {"t": round(tS + 5), "tipe": "info", "teks": "Simpangan GNSS < 1,5 cm (di bawah derau): tidak terdeteksi InaCORS, terekam akselerometer"})
     hasil.append({
-        "meta": {"id": ev["id"], "nama": f"Gempa {ev['tanggal']}", "sumber": f"BMKG · {ev['tanggal']}", "jenis": "gempa",
+        "meta": {"id": ev["id"], "nama": ev.get("nama", f"Gempa {ev['tanggal']}"),
+                 "sumber": "Skenario · Sesar Opak" if ev.get("jenis") == "hipotetis" else f"BMKG · {ev['tanggal']}", "jenis": "gempa",
+                 "hipotetis": ev.get("jenis") == "hipotetis",
                  "mw_input": m, "mw_awal": ev.get("m_awal"), "doy": ev["doy"], "kedalaman_km": h, "kedalaman_sumber": ev["h_sumber"], "waktu_wib": ev.get("wib"),
                  "catatan_bmkg": ev.get("catatan"),
                  "episenter": {"lat": ev["lat"], "lon": ev["lon"], "utm49s_E": ev["utm"][0], "utm49s_N": ev["utm"][1]},
@@ -171,6 +187,6 @@ for ev in KATALOG:
     })
     print(f"{ev['tanggal']:18s} M{m} h{h:>3} Repi {repi:6.1f} km  PGA {pga_g:.4f} g  MMI {I:.1f} ({ROMAWI[max(1, min(10, round(I)))]})  PGD {pgd:.2f} cm  statis {st_cm * 10:.3f} mm  deteksi {len(det)}  status {terburuk}")
 
-json.dump({"sumber": "Katalog gempa BMKG 2026 (dari pengguna); kedalaman Pacitan dari siaran pers BMKG", "kejadian": hasil},
+json.dump({"sumber": "Skenario hipotetis Sesar Opak + katalog gempa BMKG 2026 (dari pengguna)", "kejadian": hasil},
           open(os.path.join(D, "skenario_bmkg.json"), "w"), ensure_ascii=False, separators=(",", ":"))
 print("→ public/data/skenario_bmkg.json", os.path.getsize(os.path.join(D, "skenario_bmkg.json")) // 1024, "KB")

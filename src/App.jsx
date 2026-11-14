@@ -37,7 +37,7 @@ function Shell({ data: dataAwal }) {
   const [speed, setSpeed] = useState(1);
   const [selected, setSelected] = useState(null);
   const urai = false;   // jembatan selalu tampil utuh; dampak ditunjukkan dengan warna komponen
-  const [layers, setLayers] = useState({ Sensor: true, InaCORS: false, "Bangunan LOD1": true });
+  const [layers, setLayers] = useState({ Sensor: true, InaCORS: false, "Bangunan LOD1": false, "Titik gempa": false });   // LOD1 & titik gempa mati saat dibuka
   const [basemap, setBasemap] = useState("ortho");
   const [dim, setDim] = useState("3d");
   const [bmOpen, setBmOpen] = useState(false);
@@ -77,6 +77,8 @@ function Shell({ data: dataAwal }) {
   }, [st0, asli, ai, mode]);
   const jamAsli = asli ? new Date(asli.t0 + asli.t[ai] * 1000).toISOString().slice(11, 16) : null;
   // menu Gempa sebelum dijalankan: tampilkan episenter & jembatan; saat replay kembali ke jembatan agar getaran terlihat
+  // masuk menu Gempa → titik gempa dinyalakan sekali (tetap bisa dimatikan lewat chip lapisan)
+  useEffect(() => { if (view === "gempa") setLayers((l) => (l["Titik gempa"] ? l : { ...l, "Titik gempa": true })); }, [view]);
   const focus = view === "inacors" ? "region" : view === "gempa" && mode !== "gempa" ? "gempa" : "bridge";
 
   const runScenario = () => {
@@ -86,6 +88,7 @@ function Shell({ data: dataAwal }) {
   const reset = () => { setMode("normal"); setI(0); setSpeed(1); setPlaying(true); };
   const pilihGempa = (id) => { setSkId(id); setMode("normal"); setI(0); setSpeed(1); setPlaying(true); };
   const select = (id) => {
+    if (id?.startsWith("EPI-")) { pilihGempa(id.slice(4)); setView("gempa"); return; }   // klik titik gempa di peta
     setSelected(id);
     if (id?.startsWith("STA-")) setView("inacors");
     else if (id) setView("sensor");
@@ -124,7 +127,7 @@ function Shell({ data: dataAwal }) {
 
       <main className="map">
         <Suspense fallback={<div className="mapload"><span className="spin" />Memuat peta 3D…</div>}>
-        <MapView data={data} st={st} episenter={view === "gempa" || mode === "gempa" ? data.skenario.meta : null} layers={layers} urai={urai} selected={selected} onSelect={select} focus={focus} dim={dim} basemap={basemap} playing={playing} mode={mode} onTileError={setTileErr}
+        <MapView data={data} st={st} episenter={view === "gempa" || mode === "gempa" ? data.skenario.meta : null} gempaList={dataAwal.daftarGempa.map((k) => k.meta)} skId={data.skenario.meta.id} layers={layers} urai={urai} selected={selected} onSelect={select} focus={focus} dim={dim} basemap={basemap} playing={playing} mode={mode} onTileError={setTileErr}
           onReady={(v) => (viewer.current = v)} />
         </Suspense>
 

@@ -25,8 +25,8 @@ function uraiOffset(id) {
 
 // ---------- ikon pin (canvas resolusi 3×, ukuran tampil pas = tajam)
 const GLYPH = {
-  // episenter: titik pusat + dua busur gelombang
-  EPI: ["M12 12m-2.2 0a2.2 2.2 0 1 0 4.4 0a2.2 2.2 0 1 0 -4.4 0", "M7.5 7.5a6.4 6.4 0 0 0 0 9", "M16.5 7.5a6.4 6.4 0 0 1 0 9", "M4.6 4.6a10.5 10.5 0 0 0 0 14.8", "M19.4 4.6a10.5 10.5 0 0 1 0 14.8"],
+  // episenter: retakan tanah (garis patah bercabang)
+  EPI: ["M13 2 10 8l4 3.5-4 4 2.5 6.5", "m14 11.5 5.5-2", "m10 15.5-5 1.5", "m10 8-3.5-2"],
   GNSS: ["M13 7 9 3 5 7l4 4", "m17 11 4 4-4 4-4-4", "m8 12 4 4 6-6-4-4Z", "m16 8 3-3", "M9 21a6 6 0 0 0-6-6"],
   Akselerometer: ["M22 12h-4l-3 9L9 3l-3 9H2"],
   Tiltmeter: ["M4 20h16", "M6 20 18 6", "M14 20a8 8 0 0 0-3-6"],
@@ -102,7 +102,7 @@ const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2);
  */
 const regional = (f) => f === "region" || f === "gempa";
 
-export default function MapView({ data, st, episenter, layers, urai, selected, onSelect, focus, dim, basemap, playing, mode, onReady, onTileError }) {
+export default function MapView({ data, st, episenter, gempaList, skId, layers, urai, selected, onSelect, focus, dim, basemap, playing, mode, onReady, onTileError }) {
   const el = useRef(null);
   const v = useRef(null);
   const models = useRef({});
@@ -422,21 +422,21 @@ export default function MapView({ data, st, episenter, layers, urai, selected, o
         pixelOffset: new Cesium.Cartesian2(0, P0.h / 2), disableDepthTestDistance: Number.POSITIVE_INFINITY,
       });
     }
-    // ---------- episenter gempa terpilih (katalog BMKG) + garis ke jembatan
-    for (const id of ["EPI", "EPI-GARIS"]) { const x = ents.getById(id); if (x) ents.remove(x); }
-    if (episenter) {
-      const { lat, lon } = episenter.episenter;
-      const P0 = pin("EPI", "#C8323A", 34, 0);
-      const P = pinTeks(P0, teks(`Episenter M${episenter.mw_input.toFixed(1)} · ${episenter.nama.replace("Gempa ", "")} · ${Math.round(episenter.jarak_episenter_km)} km`, "#9E1F27", 13));
-      ents.add({ id: "EPI", position: Cesium.Cartesian3.fromDegrees(lon, lat, 0), billboard: new Cesium.BillboardGraphics({
+    // ---------- titik episenter semua gempa (lapisan "Titik gempa"); yang terpilih lebih besar + berlabel lengkap
+    for (const x of [...ents.values]) if (x.id.startsWith("EPI-")) ents.remove(x);
+    if (layers["Titik gempa"]) for (const g of gempaList || []) {
+      const on = g.id === skId, m = g.mw_input;
+      const col = m >= 6 ? "#C8323A" : m >= 4 ? "#E07B00" : "#C99400";
+      const mt = `M${m.toFixed(1).replace(".", ",")}`;
+      const P0 = pin("EPI", col, on ? 36 : 26, 0);
+      const lbl = on ? `${mt} · ${g.hipotetis ? "Skenario Sesar Opak" : g.nama.replace("Gempa ", "")} · ${Math.round(g.jarak_episenter_km)} km` : mt;
+      const P = pinTeks(P0, teks(lbl, on ? "#9E1F27" : "#25245A", on ? 13 : 12));
+      ents.add({ id: "EPI-" + g.id, position: Cesium.Cartesian3.fromDegrees(g.episenter.lon, g.episenter.lat, 0), billboard: new Cesium.BillboardGraphics({
         image: P.canvas, width: P.w, height: P.h, verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
         pixelOffset: new Cesium.Cartesian2(0, P0.h / 2), disableDepthTestDistance: Number.POSITIVE_INFINITY }) });
-      ents.add({ id: "EPI-GARIS", polyline: new Cesium.PolylineGraphics({
-        positions: Cesium.Cartesian3.fromDegreesArray([lon, lat, 110.3154, -7.9895]), width: 2.5, clampToGround: false,
-        material: new Cesium.PolylineDashMaterialProperty({ color: Cesium.Color.fromCssColorString("#C8323A"), dashLength: 14 }) }) });
     }
     ents.resumeEvents();
-  }, [st, layers, urai, selected, data, focus, fontSiap, episenter]);
+  }, [st, layers, urai, selected, data, focus, fontSiap, gempaList, skId]);
 
   return (
     <>
