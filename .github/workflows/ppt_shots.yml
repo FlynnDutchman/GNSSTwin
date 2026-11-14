@@ -1,0 +1,25 @@
+name: Tangkapan layar PPT
+on: workflow_dispatch
+permissions: { contents: write }
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm i --no-save playwright@1.47.2 && npx playwright install --with-deps chromium
+      - run: git checkout origin/ppt-data -- data_ppt
+      - run: mkdir -p shots && node tools/ppt_shots.cjs shots
+      - name: Foto pendukung (Wikimedia Commons)
+        run: |
+          for f in Prambanan_2006_Damage.jpg Java_Earthquake_hospital.jpg USGS_Shakemap_-_2006_Yogyakarta_earthquake.jpg; do
+            curl -sSL -A "GNSSTwin-ppt/1.0 (github.com/FlynnDutchman/GNSSTwin)" "https://commons.wikimedia.org/wiki/Special:FilePath/$f?width=1600" -o "shots/foto_$f" || true
+          done
+          ls -la shots
+      - name: Simpan ke cabang ppt-shots
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan tmp-shots && git rm -rf --cached . -q && git add -f shots && git commit -qm "Tangkapan layar PPT" && git push -f origin tmp-shots:ppt-shots
