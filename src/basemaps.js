@@ -2,7 +2,7 @@
 export const BASEMAPS = {
   ortho: {
     nama: "Ortho", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    max: 19, credit: "Citra: Esri, Maxar, Earthstar Geographics",
+    max: 18, credit: "Citra: Esri, Maxar, Earthstar Geographics",   // level 19 Esri butuh kunci API → di atas 18 diperbesar
     labels: "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png", fallback: "#5d6b4f",
   },
   terang: {

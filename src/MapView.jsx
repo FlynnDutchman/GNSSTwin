@@ -273,7 +273,7 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
       return n.length ? (0.6 * n.reduce((p, q) => p + q, 0)) / n.length : 0;
     };
     for (const k of data.aset.komponen) {
-      m.amp[k.id] = k.id === "LAIN" ? 0 : (acc[k.id] ?? near(k.id)) * EXAG_GETAR;
+      m.amp[k.id] = (acc[k.id] ?? near(k.id)) * EXAG_GETAR;
       const g = st.sensors.find((s) => s.komponen === k.id && s.jenis === "GNSS");
       m.target[k.id] = gempa && g?.nilai?.dE != null
         ? new Cesium.Cartesian3((g.nilai.dE / 100) * EXAG_GESER, (g.nilai.dN / 100) * EXAG_GESER, (g.nilai.dU / 100) * EXAG_GESER)

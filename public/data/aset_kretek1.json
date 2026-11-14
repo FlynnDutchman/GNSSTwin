@@ -73,12 +73,6 @@
    "id": "AU",
    "nama": "Abutmen utara",
    "model": "models/kretek1/AU.glb"
-  },
-  {
-   "id": "LAIN",
-   "nama": "Elemen lain (oprit, railing, marka, sungai)",
-   "model": "models/kretek1/LAIN.glb",
-   "urai_m": 0
   }
  ],
  "sensor": [
