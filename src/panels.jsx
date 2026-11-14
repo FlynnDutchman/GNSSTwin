@@ -80,7 +80,7 @@ export function SensorPanel({ data, st, i, selected, onSelect }) {
           <div className="tr"><span>Δ Utara (N)</span><span className="mono">{fmtSigned(s.nilai.dN)} cm</span></div>
           <div className="tr"><span>Δ Tinggi (U)</span><span className="mono">{fmtSigned(s.nilai.dU)} cm</span></div>
           <div className="tr"><span>Horizontal</span><span className="mono">{fmt(s.nilai.hz)} cm</span></div>
-          {kinfo?.indikator && <div className="tr"><span>{kinfo.indikator} (komponen {s.komponen})</span><span className={`mono ${kinfo.status}`}>{fmt(kinfo.nilai_cm)} cm</span></div>}
+          {kinfo?.indikator && <div className="tr"><span>{kinfo.indikator} (komponen {s.komponen})</span><span className={`mono ${kinfo.status}`}>{fmt(kinfo.nilai_cm, kinfo.satuan === "°" ? 2 : 1)} {kinfo.satuan || "cm"}</span></div>}
           <div className="tr"><span>Koreksi suhu</span><span className="mono">{fmt(data.skenario.koreksi_suhu_cm)} cm</span></div>
         </div>
       )}
@@ -111,7 +111,7 @@ export function GempaPanel({ data, st, mode, onRun, setView, onSelect }) {
           <button key={d.komponen} className="row" onClick={() => { const s = data.aset.sensor.find((x) => x.komponen === d.komponen && x.jenis === "GNSS"); if (s) { onSelect(s.id); setView("sensor"); } }}>
             <span className="dot-ic GNSS" />
             <span className="rt"><b>{data.aset.komponen.find((k) => k.id === d.komponen)?.nama}</b><small>{d.indikator}</small></span>
-            <span className="rv"><span className="mono">{fmt(d.nilai_cm)} cm</span><Badge status={d.status} /></span>
+            <span className="rv"><span className="mono">{fmt(d.nilai_cm, d.satuan === "°" ? 2 : 1)} {d.satuan || "cm"}</span><Badge status={d.status} /></span>
           </button>
         ))}
       </div>

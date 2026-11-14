@@ -262,7 +262,7 @@ function Hasil({ h, onAsli, asliAktif }) {
         <p className="muted small">Satu titik = posisi rata-rata selama 2 jam (12 titik per hari). Merata-rata membuat derau per 30 detik hilang, sehingga pergeseran kecil 2–4 cm bisa terdeteksi. Garis oranye = waspada (2,5 cm), merah = bahaya (5 cm); vertikal memakai ambang 2×. Lingkaran kosong = solusi belum fix (diabaikan).</p>
       </>}
 
-      {onAsli && h.t?.length > 0 && <button className={`btn ${asliAktif ? "ghost" : ""}`} onClick={() => onAsli(asliAktif ? null : h)}>{asliAktif ? "Hentikan data asli di digital twin" : `Putar data asli ${m.rover.kode} di GNSS-P2`}</button>}
+      {onAsli && h.t?.length > 0 && <button className={`btn ${asliAktif ? "ghost" : ""}`} onClick={() => onAsli(asliAktif ? null : h)}>{asliAktif ? "Hentikan data asli di digital twin" : `Putar data asli ${m.rover.kode} di GNSS-2T`}</button>}
 
       {m.konfigurasi && <div className="chips">{Object.keys(m.konfigurasi).map((k) => <button key={k} className={`chip ${conf === k ? "on" : ""}`} onClick={() => setConf(conf === k ? null : k)}>Konfigurasi {k === "jam2" ? "2 jam" : k}</button>)}</div>}
       {conf && <pre className="conf">{m.konfigurasi[conf]}</pre>}

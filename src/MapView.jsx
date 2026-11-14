@@ -376,7 +376,7 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
       let P = pin(s.jenis, col, (gnss ? 30 : 22) + (sel ? 8 : 0), gnss ? 16 : 10);
       if (sel) P = pinTeks(P, teks(s.id, "#25245A", 13));
       let e = ents.getById(s.id);
-      if (!e) e = ents.add({ id: s.id, position: follow(s.lon, s.lat, data.aset.model.h_m + s.h_lokal_m + (s.jenis === "GNSS" ? 2.9 : 0.3), s.komponen) });
+      if (!e) e = ents.add({ id: s.id, position: follow(s.lon, s.lat, data.aset.model.h_m + s.h_lokal_m + (s.jenis === "GNSS" ? 2.9 : s.jenis === "Akselerometer" ? -0.9 : 0.3), s.komponen) });
       e.show = layers.Sensor && focus !== "region";
       e.billboard = new Cesium.BillboardGraphics({
         image: P.canvas, width: P.w, height: P.h, verticalOrigin: Cesium.VerticalOrigin.BOTTOM,

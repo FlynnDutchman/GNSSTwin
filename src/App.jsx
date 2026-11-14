@@ -54,7 +54,7 @@ function Shell({ data }) {
     return () => clearInterval(id);
   }, [playing, speed, mode, t0idx, T.length]);
 
-  // data asli hasil RTKLIB (Data GNSS) diputar di sensor GNSS-P2: 1 epoch (30 dtk) tiap 0,1 dtk
+  // data asli hasil RTKLIB (Data GNSS) diputar di sensor GNSS-2T: 1 epoch (30 dtk) tiap 0,1 dtk
   const [asli, setAsli] = useState(null);
   const [ai, setAi] = useState(0);
   useEffect(() => { setAi(asli ? Math.max(0, asli.q.indexOf(1)) : 0); }, [asli]);   // mulai dari epoch fix pertama
@@ -70,7 +70,7 @@ function Shell({ data }) {
     let k = ai; while (k > 0 && asli.q[k] !== 1) k--;          // tahan nilai fix terakhir
     if (asli.q[k] !== 1) return st0;
     const e = asli.de[k] / 10, n = asli.dn[k] / 10, u = asli.du[k] / 10;
-    return { ...st0, sensors: st0.sensors.map((s) => s.id === "GNSS-P2" ? { ...s, nilai: { dE: e, dN: n, dU: u, hz: Math.hypot(e, n) }, sumber: "asli" } : s) };
+    return { ...st0, sensors: st0.sensors.map((s) => s.id === "GNSS-2T" ? { ...s, nilai: { dE: e, dN: n, dU: u, hz: Math.hypot(e, n) }, sumber: "asli" } : s) };
   }, [st0, asli, ai, mode]);
   const jamAsli = asli ? new Date(asli.t0 + asli.t[ai] * 1000).toISOString().slice(11, 16) : null;
   const focus = view === "inacors" ? "region" : "bridge";   // gempa tetap di jembatan agar getaran terlihat
@@ -183,7 +183,7 @@ function Shell({ data }) {
           <button className="play" aria-label={playing ? "Jeda" : "Putar"} onClick={() => setPlaying((p) => !p)}><Icon name={playing ? "pause" : "play"} size={18} /></button>
           <div className="tlt">
             <small className={mode === "gempa" ? "sim" : "live"}>{mode === "gempa" ? `REPLAY ×${speed}` : asli ? `DATA ASLI ${asli.meta.rover.kode} · RTKLIB` : "LIVE (data contoh)"}</small>
-            <b>{mode === "gempa" ? `t ${st.t >= 0 ? "+" : ""}${st.t} dtk dari awal gempa` : asli ? `GNSS-P2 ← ${asli.meta.rover.kode} · ${jamAsli} GPST` : "Kondisi normal"}</b>
+            <b>{mode === "gempa" ? `t ${st.t >= 0 ? "+" : ""}${st.t} dtk dari awal gempa` : asli ? `GNSS-2T ← ${asli.meta.rover.kode} · ${jamAsli} GPST` : "Kondisi normal"}</b>
           </div>
           <input type="range" min={0} max={T.length - 1} value={i} aria-label="Waktu replay"
             onChange={(e) => { setI(+e.target.value); if (mode === "normal") setMode("gempa"); setPlaying(false); }} />
