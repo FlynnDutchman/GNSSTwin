@@ -249,7 +249,14 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
       scaleTxt.current.textContent = m >= 1000 ? `${m / 1000} km` : `${m} m`;
     });
 
-    return () => { offMove(); offPost(); handler.destroy(); viewer.destroy(); };
+    // pengaman mode render sesuai kebutuhan: gambar ulang selama ubin peta masih dimuat, saat ukuran berubah,
+    // dan saat tab kembali terlihat (tanpa ini layar bisa hitam bila frame pertama terlewat)
+    const jaga = setInterval(() => { if (!viewer.isDestroyed() && !viewer.scene.globe.tilesLoaded) viewer.scene.requestRender(); }, 250);
+    const ro = new ResizeObserver(() => !viewer.isDestroyed() && viewer.scene.requestRender()); ro.observe(el.current);
+    const lihat = () => !viewer.isDestroyed() && viewer.scene.requestRender(); document.addEventListener("visibilitychange", lihat);
+    viewer.scene.requestRender();
+
+    return () => { clearInterval(jaga); ro.disconnect(); document.removeEventListener("visibilitychange", lihat); offMove(); offPost(); handler.destroy(); viewer.destroy(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
