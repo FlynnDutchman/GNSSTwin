@@ -37,7 +37,21 @@ export function susunLod1(elemenList) {
   for (const w of W.values()) if (w.tags?.building) tambah(w.tags, w.nodes);
   for (const r of R.values()) if (r.tags?.building) for (const m of r.members) if (m.type === "way" && m.role === "outer" && W.has(m.ref)) tambah(r.tags, W.get(m.ref).nodes);
   return { sumber: `© OpenStreetMap contributors (ODbL), OSM API ${new Date().toISOString().slice(0, 10)}`, lod: 1,
-    aturan_tinggi: "height → levels×3,2+1 → baku per jenis", bbox: BBOX, jumlah: out.length, asal_tinggi: asal, bangunan: out };
+    aturan_tinggi: "height → levels×3,2+1 → baku per jenis", bbox: BBOX, jumlah: out.length, asal_tinggi: asal, ...ringkas(out) };
+}
+
+// Format ringkas (±5× lebih kecil): titik asal + bilangan bulat 1e-6° (±0,1 m) yang di-delta per bangunan.
+// b = [[tinggi×10, x0, y0, dx1, dy1, ...], ...]
+export const ASAL = [110.31539, -7.99062];
+function ringkas(out) {
+  return { format: "delta-1e-6", asal: ASAL, b: out.map((o) => {
+    const v = [Math.round(o.h * 10)]; let px = 0, py = 0;
+    for (let i = 0; i < o.p.length; i += 2) {
+      const x = Math.round((o.p[i] - ASAL[0]) * 1e6), y = Math.round((o.p[i + 1] - ASAL[1]) * 1e6);
+      v.push(x - px, y - py); px = x; py = y;
+    }
+    return v;
+  }) };
 }
 
 async function main(dst) {

@@ -194,3 +194,5 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .lp .why { grid-column: 1 / -1; font-size: 11px; }
 .badge.acuan { color: var(--blue-600); background: var(--blue-50); }
 .tr.note2 span { color: var(--muted); font-size: 12px; }
+.mapload { position: absolute; inset: 12px; border-radius: 20px; display: grid; place-content: center; grid-auto-flow: column; align-items: center; gap: 4px; color: var(--muted); font-size: 14px; background: linear-gradient(180deg, #dfe8f1, #eef2f6); }
+.cesium-widget-credits { display: none !important; }   /* kredit ditampilkan di legenda */

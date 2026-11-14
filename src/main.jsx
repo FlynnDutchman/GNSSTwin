@@ -6,7 +6,7 @@ import "@fontsource/plus-jakarta-sans/600.css";
 import "@fontsource/plus-jakarta-sans/700.css";
 import "@fontsource/plus-jakarta-sans/800.css";
 import "@fontsource/ibm-plex-mono/500.css";
-import "cesium/Build/Cesium/Widgets/widgets.css";
+import "@cesium/engine/Source/Widget/CesiumWidget.css";
 import "./styles.css";
 import App from "./App.jsx";
 

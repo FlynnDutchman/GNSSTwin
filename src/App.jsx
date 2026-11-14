@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import * as Cesium from "cesium";
-import MapView, { EXAG_GESER } from "./MapView.jsx";
+import { lazy, Suspense } from "react";
+import { EXAG_GESER } from "./konstanta.js";
+// CesiumJS (±1,1 MB gzip) dimuat terpisah: panel & data tampil dulu, peta 3D menyusul
+const mapImport = import("./MapView.jsx");          // mulai unduh segera, paralel dengan data
+const MapView = lazy(() => mapImport);
 import { loadAll, stateAt, fmt } from "./data.js";
 import { Icon, Logo } from "./icons.jsx";
 import { Chip } from "./ui.jsx";
@@ -112,12 +115,14 @@ function Shell({ data }) {
         <Brand mode={mode} />
         {panel}
         {/* Data GNSS tetap terpasang agar file & hasil olahan tidak hilang saat pindah menu */}
-        <div style={{ display: view === "data" ? "contents" : "none" }}><DataPanel onAsli={setAsli} asliAktif={!!asli} /></div>
+        <div style={{ display: view === "data" ? "contents" : "none" }}><DataPanel aktif={view === "data"} onAsli={setAsli} asliAktif={!!asli} /></div>
       </aside>
 
       <main className="map">
+        <Suspense fallback={<div className="mapload"><span className="spin" />Memuat peta 3D…</div>}>
         <MapView data={data} st={st} layers={layers} urai={urai} selected={selected} onSelect={select} focus={focus} dim={dim} basemap={basemap} playing={playing} mode={mode} onTileError={setTileErr}
           onReady={(v) => (viewer.current = v)} />
+        </Suspense>
 
         {danger && (
           <div className="banner">
@@ -192,5 +197,3 @@ function Shell({ data }) {
   );
 }
 
-// akses Cesium dari konsol untuk debugging
-window.Cesium = Cesium;

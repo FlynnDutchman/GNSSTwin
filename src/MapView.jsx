@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import * as Cesium from "cesium";
+import {
+  Axis, BillboardGraphics, BoundingSphere, CallbackPositionProperty, Cartesian2, Cartesian3, Cartographic, Color, ColorBlendMode, ColorGeometryInstanceAttribute, EllipsoidTerrainProvider, GeometryInstance, HeadingPitchRange, HeadingPitchRoll, HorizontalOrigin, ImageryLayer, Ion, Math as CesiumMath, Matrix3, Matrix4, Model, PerInstanceColorAppearance, PolygonGeometry, PolygonHierarchy, Primitive, Rectangle, ScreenSpaceEventHandler, ScreenSpaceEventType, SingleTileImageryProvider, TileMapServiceImageryProvider, Transforms, UrlTemplateImageryProvider, VerticalOrigin, CesiumWidget, buildModuleUrl,
+} from "@cesium/engine";
+import { EXAG_GESER } from "./konstanta.js";
+export { EXAG_GESER };
+const Cesium = { Axis, BillboardGraphics, BoundingSphere, CallbackPositionProperty, Cartesian2, Cartesian3, Cartographic, Color, ColorBlendMode, ColorGeometryInstanceAttribute, EllipsoidTerrainProvider, GeometryInstance, HeadingPitchRange, HeadingPitchRoll, HorizontalOrigin, ImageryLayer, Ion, Math: CesiumMath, Matrix3, Matrix4, Model, PerInstanceColorAppearance, PolygonGeometry, PolygonHierarchy, Primitive, Rectangle, ScreenSpaceEventHandler, ScreenSpaceEventType, SingleTileImageryProvider, TileMapServiceImageryProvider, Transforms, UrlTemplateImageryProvider, VerticalOrigin, CesiumWidget, buildModuleUrl };
 import { BASEMAPS } from "./basemaps.js";
 
 const STATUS_COLOR = { aman: "#1E8A5A", waspada: "#E0A100", bahaya: "#C8323A" };
 const JENIS_COLOR = { GNSS: "#1479BB", Tiltmeter: "#B86B00", Akselerometer: "#1E8A5A" };
 
 // Skala visual. Pergeseran nyata hanya beberapa cm, jadi dibesarkan agar terlihat di layar.
-export const EXAG_GESER = 100;     // pergeseran permanen GNSS: 1 cm tampil 1 m
 const EXAG_GETAR = 25;             // getaran: 0,1 g tampil ±2,5 m
 const F_GETAR = 1.8;               // frekuensi getar visual (Hz), kira-kira mode lateral bentang
 
@@ -112,6 +116,8 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
   }, []);
   const layersRef = useRef(layers); layersRef.current = layers;
   useEffect(() => { if (lod1.current) lod1.current.show = layers["Bangunan LOD1"] !== false; }, [layers]);
+  // mode render sesuai kebutuhan: setiap perubahan props (data, status, layer, peta dasar) → gambar ulang sekali
+  useEffect(() => { const vw = v.current; if (vw && !vw.isDestroyed()) vw.scene.requestRender(); });
   const mot = useRef({ uraiTarget: 0, uraiT: 0, shaking: false, target: {}, cur: {}, amp: {}, enu: {} });
 
   // ---------- inisialisasi sekali
@@ -120,20 +126,21 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
     const ne = Cesium.ImageryLayer.fromProviderAsync(
       Cesium.TileMapServiceImageryProvider.fromUrl(Cesium.buildModuleUrl("Assets/Textures/NaturalEarthII"))
     );
-    const viewer = new Cesium.Viewer(el.current, {
+    // CesiumWidget (tanpa paket widget Viewer) → unduhan JavaScript jauh lebih kecil; entitas tetap didukung
+    const viewer = new Cesium.CesiumWidget(el.current, {
       baseLayer: ne, terrainProvider: new Cesium.EllipsoidTerrainProvider(),
-      animation: false, timeline: false, baseLayerPicker: false, geocoder: false, homeButton: false,
-      sceneModePicker: false, navigationHelpButton: false, fullscreenButton: false,
-      infoBox: false, selectionIndicator: false,
+      // ringan: gambar ulang hanya bila ada perubahan (kamera, data, animasi), bukan 60 fps terus-menerus
+      requestRenderMode: true, maximumRenderTimeChange: Infinity, msaaSamples: 1,
     });
     neLayer.current = ne;
     viewer.useBrowserRecommendedResolution = false;   // render sesuai kepadatan layar → model, pin, label tajam
+    viewer.resolutionScale = Math.min(1, 2 / (window.devicePixelRatio || 1));   // HP dengan layar 3× dibatasi 2×
     viewer.scene.postProcessStages.fxaa.enabled = true;
     viewer.scene.globe.depthTestAgainstTerrain = false;
     viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#E4E9EE");
     viewer.scene.globe.showGroundAtmosphere = false;
-    viewer.cesiumWidget.creditContainer.style.display = "none";
     v.current = viewer;
+    window.__gnsstwin = viewer;   // untuk pemeriksaan dari konsol
     onReady?.(viewer);
 
     // ortho offline (opsional): public/img/ortho.json → [{file, bbox:[w,s,e,n]}]
@@ -158,23 +165,30 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
       mot.current.cur[k.id] = new Cesium.Cartesian3();
       mot.current.enu[k.id] = new Cesium.Cartesian3();
       Cesium.Model.fromGltfAsync({ url: "./" + k.model, modelMatrix: base, upAxis: Cesium.Axis.Z, forwardAxis: Cesium.Axis.X })
-        .then((m) => { if (!viewer.isDestroyed()) { viewer.scene.primitives.add(m); models.current[k.id] = m; } });
+        .then((m) => { if (!viewer.isDestroyed()) { viewer.scene.primitives.add(m); models.current[k.id] = m; m.readyEvent.addEventListener(() => viewer.scene.requestRender()); } });
     }
 
     // ---------- bangunan LOD1 (footprint OpenStreetMap diekstrusi setinggi bangunan)
-    fetch("./data/bangunan_lod1.json").then((r) => (r.ok ? r.json() : null)).then((d) => {
+    // dimuat setelah jembatan tampil (tidak menghambat pembukaan), format ringkas delta 1e-6°
+    const muatLod1 = () => fetch("./data/bangunan_lod1.json").then((r) => (r.ok ? r.json() : null)).then((d) => {
       if (!d || viewer.isDestroyed()) return;
-      const inst = [];
-      for (const b of d.bangunan) {
-        const pos = Cesium.Cartesian3.fromDegreesArray(b.p);
+      const [x0, y0] = d.asal || [0, 0], inst = [];
+      const warna = [Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.fromCssColorString("#DCE3EA")),
+                     Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.fromCssColorString("#C9D3DE"))];
+      for (const v of d.b) {
+        const h = v[0] / 10, deg = []; let x = 0, y = 0;
+        for (let i = 1; i < v.length; i += 2) { x += v[i]; y += v[i + 1]; deg.push(x0 + x * 1e-6, y0 + y * 1e-6); }
         inst.push(new Cesium.GeometryInstance({
-          geometry: new Cesium.PolygonGeometry({ polygonHierarchy: new Cesium.PolygonHierarchy(pos), height: 0, extrudedHeight: b.h, vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT }),
-          attributes: { color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.fromCssColorString(b.h >= 7 ? "#C9D3DE" : "#DCE3EA")) },
+          geometry: new Cesium.PolygonGeometry({ polygonHierarchy: new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(deg)), height: 0, extrudedHeight: h, vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT }),
+          attributes: { color: warna[h >= 7 ? 1 : 0] },
         }));
       }
-      lod1.current = viewer.scene.primitives.add(new Cesium.Primitive({ geometryInstances: inst, appearance: new Cesium.PerInstanceColorAppearance({ translucent: false }), asynchronous: true }));
-      lod1.current.show = layersRef.current["Bangunan LOD1"] !== false;
+      const prim = viewer.scene.primitives.add(new Cesium.Primitive({ geometryInstances: inst, appearance: new Cesium.PerInstanceColorAppearance({ translucent: false, flat: false }), asynchronous: true }));
+      prim.show = layersRef.current["Bangunan LOD1"] !== false;
+      lod1.current = prim;
+      const tunggu = setInterval(() => { if (viewer.isDestroyed()) return clearInterval(tunggu); viewer.scene.requestRender(); if (prim.ready) clearInterval(tunggu); }, 150);
     }).catch(() => {});
+    (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(muatLod1, { timeout: 2500 });
 
     // ---------- loop gerak
     const tmpL = new Cesium.Cartesian3(), tmpE = new Cesium.Cartesian3(), T = new Cesium.Matrix4(), M = new Cesium.Matrix4();
@@ -186,9 +200,11 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
       const dir = Math.sign(m.uraiTarget - m.uraiT);
       if (dir) m.uraiT = Math.min(1, Math.max(0, m.uraiT + dir * dt / 0.9));
       const u = ease(m.uraiT);
+      let sibuk = m.shaking || (dir !== 0 && m.uraiT > 0 && m.uraiT < 1) || (dir !== 0 && m.uraiT !== m.uraiTarget);
       data.aset.komponen.forEach((k, idx) => {
         // pergeseran permanen: mendekati target dengan halus
         const cur = m.cur[k.id], tg = m.target[k.id] || Cesium.Cartesian3.ZERO;
+        if (Cesium.Cartesian3.distanceSquared(cur, tg) > 1e-6) sibuk = true;
         Cesium.Cartesian3.lerp(cur, tg, Math.min(1, dt * 4), cur);
         // offset lokal = urai + getaran lateral/vertikal
         const [ux, uy, uz] = uraiOffset(k.id);
@@ -205,6 +221,7 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
           mdl.modelMatrix = Cesium.Matrix4.multiply(M, R, new Cesium.Matrix4());   // setter → Cesium memperbarui posisi
         }
       });
+      if (sibuk) setTimeout(() => !viewer.isDestroyed() && viewer.scene.requestRender(), 0);
     });
 
     const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
