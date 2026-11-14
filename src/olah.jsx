@@ -78,15 +78,15 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
   async function olah() {
     setGalat(null); setHasil(null); onAsli?.(null);
     const ac = new AbortController(); pembatal.current = ac;
-    const pilihan = { base, rover, mode: "kinematic", resetOtomatis: reset };
+    const pilihan = { base, rover, mode: "kinematic", resetOtomatis: reset, konstelasi: tersedia };
     const t0 = performance.now();
-    setMaju({ G: 0, GR: 0, GRE: 0 }); setProses("Mengolah");
+    setMaju(Object.fromEntries(tersedia.map((k) => [k, 0]))); setProses("Mengolah");
     try {
       let r = {};
       if (mesin === "server" && server) {
         const { sesi } = await (await fetch(server.url + "/api/sesi", { method: "POST" })).json();
         for (const b of berkas) await fetch(`${server.url}/api/unggah?sesi=${sesi}&nama=${encodeURIComponent(b.nama)}`, { method: "POST", body: b.isi, signal: ac.signal });
-        for (const k of Object.keys(KONSTELASI)) {
+        for (const k of tersedia) {
           const res = await fetch(server.url + "/api/olah", { method: "POST", headers: { "content-type": "application/json" }, signal: ac.signal,
             body: JSON.stringify({ sesi, ...pilihan, sistem: k, nav: berkas.filter((b) => b.header.tipe !== "O").map((b) => b.nama) }) });
           r[k] = await res.json(); if (!res.ok) throw new Error(r[k].error);
@@ -96,7 +96,7 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
         r = await olahDiBrowser(berkas, pilihan, setMaju, ac.signal);
       }
       setHasil({ ...Object.fromEntries(Object.entries(r).map(([k, v]) => [k, keKolom(v)])), detik: (performance.now() - t0) / 1000 });
-      setTab("GR");
+      setTab(tersedia.includes("GR") ? "GR" : "G");
       setTimeout(() => keHasil.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);   // langsung tampilkan hasil
     } catch (e) {
       setGalat(ac.signal.aborted ? "Pengolahan dibatalkan." : String(e.message || e));
@@ -106,6 +106,10 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
 
   const obs = berkas.filter((f) => f.header.tipe === "O");
   const nav = berkas.filter((f) => f.header.tipe !== "O");
+  // orbit satelit (ephemeris) per sistem: .n = GPS saja, .g = GLONASS, BRDC gabungan (M) = semua
+  const adaGlo = nav.some((f) => f.header.sistem === "M" || f.header.tipe === "G" || f.header.sistem === "R");
+  const adaGal = nav.some((f) => f.header.sistem === "M" || f.header.sistem === "E");
+  const tersedia = ["G", ...(adaGlo ? ["GR"] : []), ...(adaGlo && adaGal ? ["GRE"] : [])];
   const bisa = base && rover && base !== rover && nav.length && !proses;
   const kurang = obs.length < 2 ? "Tambahkan 2 file observasi (.26o): satu stasiun base dan satu rover."
     : !nav.length ? "Tambahkan file navigasi (.26n / .26g / BRDC…rnx.gz)."
@@ -153,7 +157,8 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
           </div>
         )}
         {!proses && <button className="btn besar" id="tombol-olah" disabled={!bisa} onClick={olah}>{hasil ? "↻ Olah ulang" : "▶ Olah data"}</button>}
-        {!proses && bisa && <p className="muted small">Sekali olah langsung menghitung 3 pilihan satelit: GPS, GPS+GLONASS, dan GPS+GLONASS+Galileo.</p>}
+        {!proses && bisa && tersedia.length === 3 && <p className="muted small">Sekali olah langsung menghitung 3 pilihan satelit: GPS, GPS+GLONASS, dan GPS+GLONASS+Galileo.</p>}
+        {!proses && nav.length > 0 && tersedia.length < 3 && <div className="warnbox"><p>⚠ File navigasi yang dimasukkan hanya berisi orbit satelit <b>{tersedia.length === 1 ? "GPS" : "GPS dan GLONASS"}</b>, jadi {tersedia.length === 1 ? "GLONASS dan Galileo" : "Galileo"} tidak bisa ikut dihitung.</p><p>Untuk membandingkan multi-GNSS, tambahkan file navigasi gabungan <b>BRDC00WRD_S_…_MN.rnx.gz</b> (hari yang sama).</p></div>}
         {!bisa && !proses && <p className="muted small">{kurang}</p>}
         {!proses && <button className="linkbtn" onClick={() => { setBerkas([]); setBase(""); setRover(""); setManual(false); setHasil(null); setGalat(null); onAsli?.(null); }}>Hapus semua file</button>}
       </>}
@@ -181,14 +186,14 @@ function Progres({ maju, onBatal }) {
       {Object.entries(maju).map(([k, f]) => (
         <div className="sub" key={k}><span>{KONSTELASI[k]}</span><div className="bar kecil"><i style={{ width: `${f * 100}%` }} /></div><span className="mono">{Math.round(f * 100)}%</span></div>
       ))}
-      <small>Tiga pilihan satelit diolah bersamaan. Data 24 jam ±1–2 menit; jangan tutup halaman.</small>
+      <small>{Object.keys(maju).length > 1 ? `${Object.keys(maju).length} pilihan satelit diolah bersamaan. ` : ""}Data 24 jam ±1–2 menit; jangan tutup halaman.</small>
     </div>
   );
 }
 
 /** Perbandingan ketiga konstelasi dari data yang sama: inilah manfaat multi-GNSS. */
 function Banding({ hasil }) {
-  const ks = Object.keys(KONSTELASI).filter((k) => hasil[k]);
+  const ks = Object.keys(KONSTELASI);
   const m = (k) => hasil[k].meta;
   const h = (k) => { const s = m(k).stat_epoch; return s?.e ? Math.hypot(s.e.sb_robust_mm, s.n.sb_robust_mm) / 10 : null; };
   const v = (k) => m(k).stat_epoch?.u ? m(k).stat_epoch.u.sb_robust_mm / 10 : null;
@@ -204,8 +209,9 @@ function Banding({ hasil }) {
       <div className="label">PERBANDINGAN PILIHAN SATELIT · DATA YANG SAMA</div>
       <div className="table banding">
         <div className="tr th"><span>Dari data yang sama</span>{ks.map((k) => <span key={k}>{k === "G" ? "GPS" : k === "GR" ? "G+R" : "G+R+E"}</span>)}</div>
-        {baris.map(([l, f]) => <div className="tr" key={l}><span>{l}</span>{ks.map((k) => <span key={k} className="mono">{f(k)}</span>)}</div>)}
+        {baris.map(([l, f]) => <div className="tr" key={l}><span>{l}</span>{ks.map((k) => <span key={k} className="mono">{hasil[k] ? f(k) : "–"}</span>)}</div>)}
       </div>
+      {ks.some((k) => !hasil[k]) && <p className="warnbox">Kolom “–”: file navigasi untuk sistem satelit itu tidak ada. Tambahkan file BRDC gabungan lalu olah ulang.</p>}
       <p className="muted small">Pada data Ina-CORS ini (RINEX 2.11) Galileo hanya satu frekuensi, jadi Galileo menambah jumlah satelit tetapi belum bisa di-fix; hasil terbaik biasanya GPS+GLONASS. Klik tab di bawah untuk melihat detail tiap pilihan.</p>
     </>
   );
