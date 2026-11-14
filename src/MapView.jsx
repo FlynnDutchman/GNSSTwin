@@ -193,6 +193,18 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
     }).catch(() => {});
     (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(muatLod1, { timeout: 2500 });
 
+    // ---------- stasiun GNSS 3D (tiang + antena Ø212 mm + panel surya + kotak baterai/IoT) di tiap sensor GNSS
+    const stasiun = [];
+    for (const sn of data.aset.sensor.filter((x) => x.jenis === "GNSS")) {
+      const p0 = Cesium.Cartesian3.fromDegrees(sn.lon, sn.lat, model.h_m + sn.h_lokal_m);
+      const b0 = Cesium.Transforms.headingPitchRollToFixedFrame(p0, new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(model.heading_deg), 0, 0));
+      const st = { komp: sn.komponen, b0, mdl: null };
+      stasiun.push(st);
+      Cesium.Model.fromGltfAsync({ url: "./models/stasiun_gnss.glb", modelMatrix: b0, forwardAxis: Cesium.Axis.X })
+        .then((mm) => { if (!viewer.isDestroyed()) { viewer.scene.primitives.add(mm); st.mdl = mm; mm.readyEvent.addEventListener(() => viewer.scene.requestRender()); } });
+    }
+    const tmpS = new Cesium.Cartesian3(), TS = new Cesium.Matrix4();
+
     // ---------- loop gerak
     const tmpL = new Cesium.Cartesian3(), tmpE = new Cesium.Cartesian3(), T = new Cesium.Matrix4(), M = new Cesium.Matrix4();
     let lastT = performance.now();
@@ -224,6 +236,14 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
           mdl.modelMatrix = Cesium.Matrix4.multiply(M, R, new Cesium.Matrix4());   // setter → Cesium memperbarui posisi
         }
       });
+      // stasiun GNSS ikut bergerak bersama komponen tempatnya terpasang
+      for (const st of stasiun) {
+        if (!st.mdl) continue;
+        const e = m.enu[st.komp] || Cesium.Cartesian3.ZERO;
+        Cesium.Matrix3.multiplyByVector(m.ENUrot, e, tmpS);
+        Cesium.Matrix4.fromTranslation(tmpS, TS);
+        st.mdl.modelMatrix = Cesium.Matrix4.multiply(TS, st.b0, new Cesium.Matrix4());
+      }
       if (sibuk) setTimeout(() => !viewer.isDestroyed() && viewer.scene.requestRender(), 0);
     });
 
@@ -356,7 +376,7 @@ export default function MapView({ data, st, layers, urai, selected, onSelect, fo
       let P = pin(s.jenis, col, (gnss ? 30 : 22) + (sel ? 8 : 0), gnss ? 16 : 10);
       if (sel) P = pinTeks(P, teks(s.id, "#25245A", 13));
       let e = ents.getById(s.id);
-      if (!e) e = ents.add({ id: s.id, position: follow(s.lon, s.lat, data.aset.model.h_m + s.h_lokal_m + 0.3, s.komponen) });
+      if (!e) e = ents.add({ id: s.id, position: follow(s.lon, s.lat, data.aset.model.h_m + s.h_lokal_m + (s.jenis === "GNSS" ? 2.9 : 0.3), s.komponen) });
       e.show = layers.Sensor && focus !== "region";
       e.billboard = new Cesium.BillboardGraphics({
         image: P.canvas, width: P.w, height: P.h, verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
