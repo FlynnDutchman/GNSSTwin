@@ -118,6 +118,7 @@ export function GempaPanel({ data, st, mode, onRun, setView, onSelect, skId, onP
           <div><b>{mode === "gempa" && st.deteksi.length ? `${st.deteksi.length}/${data.stasiun.length}` : r.stasiun_mendeteksi ? `${r.stasiun_mendeteksi}` : "0"}</b><small>InaCORS deteksi</small></div>
         </div>
         <p className="note">Kedalaman {m.kedalaman_km} km ({m.kedalaman_sumber}) · jarak hiposenter {angka(m.jarak_hiposenter_km, 0)} km · {m.rasa}{m.catatan_bmkg ? ` · ${m.catatan_bmkg}` : ""}</p>
+        {m.ekstrapolasi?.length > 0 && <p className="note">Di luar rentang kalibrasi rumus intensitas ({m.ekstrapolasi.join(", ")}): angka MMI bersifat perkiraan kasar.</p>}
         {mode !== "gempa" ? <button className="btn light" onClick={onRun}>Jalankan skenario gempa</button> : <button className="btn light" onClick={onReset}>Selesai · kembali</button>}
       </div>
 
@@ -130,7 +131,7 @@ export function GempaPanel({ data, st, mode, onRun, setView, onSelect, skId, onP
         <div className="tr"><span>Percepatan dek maks (akselerometer)</span><span className="mono">{angka(m.pga_g * 2.2, 3)} g</span></div>
         <div className="tr"><span>Mw dari PGD InaCORS</span><span className="mono">{r.mw_akhir ? angka(r.mw_akhir) : "– (< 2 stasiun)"}</span></div>
       </div>
-      <p className="muted small">Model: intensitas Bakun & Wentworth (1997), PGA dari MMI (Wald dkk. 1999), simpangan GNSS dari Melgar dkk. (2015). Gempa Pacitan menghasilkan IV MMI, sama dengan catatan BMKG di Bantul.</p>
+      <p className="muted small">Model: intensitas Bakun & Wentworth (1997, pers. 6, jarak episenter), PGA dari MMI (Wald dkk. 1999), simpangan GNSS dari Melgar dkk. (2015), momen seismik Hanks & Kanamori (1979). Faktor dinamis dek 2,2/1,8 adalah asumsi rekayasa. Gempa Pacitan menghasilkan IV MMI, sama dengan catatan BMKG di Bantul.</p>
 
       {mode === "gempa" && <>
         <div className="label">STATUS KOMPONEN KRETEK I</div>

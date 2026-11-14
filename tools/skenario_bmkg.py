@@ -3,13 +3,19 @@ Skenario gempa dari katalog BMKG 2026 → respons tiap sensor Jembatan Kretek I.
 
 Dampak di jembatan dihitung dari JARAK dan MAGNITUDO (bukan dikarang):
   jarak         : episenter → jembatan (haversine), hiposenter R = √(Repi² + h²)
-  Intensitas    : Bakun & Wentworth (1997)  MMI = 3,67 + 1,17·M − 3,19·log10(R)   (berlaku M kecil–besar)
-  PGA           : dari MMI, kebalikan Wald dkk. (1999): log10 PGA[cm/s²] = (MMI+1,66)/3,66 (MMI ≥ V), (MMI−1)/2,20 (MMI < V)
+  Intensitas    : Bakun & Wentworth (1997, BSSA 87(6), hlm. 1508, Pers. 6)  MMI = 5,07 + 1,09·M − 3,69·log10(Δ)
+                  Δ = jarak EPISENTER (km). Dikalibrasi untuk California, M 4,4–6,9, Δ ≲ 150 km;
+                  gempa M < 4,4 atau Δ > 150 km = ekstrapolasi (ditandai di JSON).
+  PGA           : dari MMI, kebalikan Wald, Quitoriano, Heaton & Kanamori (1999, Earthquake Spectra 15(3)):
+                  MMI = 3,66·log10 PGA − 1,66 (MMI ≥ V); cabang MMI < V: MMI = 2,20·log10 PGA + 1,00
+                  (koefisien cabang bawah sesuai implementasi resmi USGS ShakeMap, shakelib.gmice.wald99). PGA dalam cm/s².
                   (Fukushima-Tanaka 1990 dicoba lebih dulu, tetapi terlalu besar untuk M < 5: M3,5 @19 km → V MMI)
-  PGD (GNSS)    : Melgar dkk. (2015)  log10 PGD[cm] = −4,434 + 1,047M − 0,138·M·log10(R)
-  geser statis  : sumber titik, u ≈ 0,5·M0 / (4π μ R²), M0 = 10^(1,5M+9,1) N·m, μ = 30 GPa
-  respons dek   : percepatan dek = PGA situs × faktor dinamis (bentang tengah 2,2; bentang tepi 1,8)
-  waktu tiba    : P = R/6,5 km/s, S = R/3,6 km/s
+  PGD (GNSS)    : Melgar dkk. (2015, GRL 42)  log10 PGD[cm] = −4,434 + 1,047M − 0,138·M·log10(R), R = jarak HIPOSENTER
+  geser statis  : pendekatan orde besaran sumber titik (suku statis medan jauh, Aki & Richards 2002):
+                  u ≈ 0,5·M0 / (4π μ R²), M0 dari Hanks & Kanamori (1979): log10 M0[N·m] = 1,5M + 9,05, μ = 30 GPa
+  respons dek   : ASUMSI REKAYASA (bukan dari jurnal): percepatan dek = PGA × faktor dinamis 2,2 (bentang tengah) /
+                  1,8 (bentang tepi), di bawah amplifikasi plato spektrum respons desain (≈2,5×). Perlu dicek ke SNI 2833:2016.
+  waktu tiba    : P = R/6,5 km/s, S = R/3,6 km/s (kecepatan rata-rata kerak, pendekatan)
 Kalibrasi: gempa Pacitan 6 Feb 2026 (BMKG: M6,4, kemudian 6,2; kedalaman 58 km) → model memberi
 MMI ≈ IV di Kretek; BMKG mencatat IV MMI di Bantul.
 
@@ -50,10 +56,10 @@ def azimut(a, b, c, d):          # dari (a,b) ke (c,d), derajat dari utara
     return (math.degrees(math.atan2(y, x)) + 360) % 360
 
 
-def mmi_bw(m, r): return max(1.0, 3.67 + 1.17 * m - 3.19 * math.log10(r))
+def mmi_bw(m, d): return max(1.0, 5.07 + 1.09 * m - 3.69 * math.log10(max(d, 1.0)))   # d = jarak episenter (km)
 def pga_dari_mmi(I): return 10 ** ((I + 1.66) / 3.66) if I >= 5 else 10 ** ((I - 1.0) / 2.20)
 def pgd_cm(m, r): return 10 ** (-4.434 + 1.047 * m - 0.138 * m * math.log10(r))
-def statis_cm(m, r): return 100 * 0.5 * 10 ** (1.5 * m + 9.1) / (4 * math.pi * 3e10 * (r * 1e3) ** 2)
+def statis_cm(m, r): return 100 * 0.5 * 10 ** (1.5 * m + 9.05) / (4 * math.pi * 3e10 * (r * 1e3) ** 2)
 def lvl(v, w, b): return "bahaya" if v >= b else ("waspada" if v >= w else "aman")
 ROMAWI = ["I", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
 
@@ -74,7 +80,7 @@ for ev in KATALOG:
     ue, un = math.sin(math.radians(baz)), math.cos(math.radians(baz))
     tP, tS = r / 6.5, r / 3.6
     dur = max(4.0, 3 + 0.02 * r + 3 * max(0, m - 3))
-    I = mmi_bw(m, r); pga = pga_dari_mmi(I) if I > 1.0 else 0.3; pga_g = pga / 981
+    I = mmi_bw(m, repi); pga = pga_dari_mmi(I) if I > 1.0 else 0.3; pga_g = pga / 981
     pgd = pgd_cm(m, r) * 1.3; st_cm = statis_cm(m, r)
     T = list(range(-20, int(min(240, tS + dur * 3 + 30)) + 1))
 
@@ -154,7 +160,8 @@ for ev in KATALOG:
                  "pga_g": round(pga_g, 4), "mmi": round(I, 1), "mmi_romawi": ROMAWI[max(1, min(10, round(I)))], "rasa": rasa,
                  "pgd_cm": round(pgd, 2), "statis_mm": round(st_cm * 10, 3), "t_p_s": round(tP, 1), "t_s_s": round(tS, 1),
                  "dt_s": 1, "satuan_posisi": "cm (ENU relatif)",
-                 "catatan": "Respons sensor dihitung dari jarak & magnitudo (Bakun-Wentworth 1997, Wald 1999, Melgar 2015) ditambah derau GNSS nyata."},
+                 "catatan": "Respons sensor dihitung dari jarak & magnitudo (Bakun-Wentworth 1997, Wald 1999, Melgar 2015) ditambah derau GNSS nyata.",
+                 "ekstrapolasi": ([] if 4.4 <= m <= 6.9 else ["M di luar 4,4–6,9"]) + ([] if repi <= 150 else ["jarak > 150 km"])},
         "waktu_s": T, "sensor": seri, "stasiun": sta, "mw_estimasi": mw_est, "kejadian": kejadian,
         "status_komponen": {"berlaku_mulai_t": round(tS + dur), "daftar": daftar},
         "koreksi_suhu_cm": 0.4,
