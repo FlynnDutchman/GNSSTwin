@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "./icons.jsx";
 import { Badge } from "./ui.jsx";
 import { fmt } from "./data.js";
-import { periksaBerkas, olahDiBrowser } from "./gnss/browser.js";
+import { periksaBerkas, olahDiBrowser, KONSTELASI } from "./gnss/browser.js";
 
 async function cariServer() {
   for (const s of ["", "http://localhost:8787"]) {
@@ -36,9 +36,11 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
   const [mesin, setMesin] = useState("browser");
   const [berkas, setBerkas] = useState([]);
   const [base, setBase] = useState(""); const [rover, setRover] = useState("");
-  const [sistem, setSistem] = useState("GR"); const [reset, setReset] = useState(true);
+  const [tab, setTab] = useState("GR"); const reset = true;
   const [proses, setProses] = useState(null); const [galat, setGalat] = useState(null);
-  const [hasil, setHasil] = useState(null); const [contoh, setContoh] = useState(false);
+  const [maju, setMaju] = useState(null);           // {G:0..1, GR:.., GRE:..}
+  const [hasil, setHasil] = useState(null);          // {G: kolom, GR: kolom, GRE: kolom}
+  const pembatal = useRef(null);
   const [uji, setUji] = useState(null);
   const [deteksi, setDeteksi] = useState(null);
   const [lihatBukti, setLihatBukti] = useState(false);
@@ -72,26 +74,34 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
     setProses(null);
   }
 
+  // Sekali olah = ketiga konstelasi (GPS, GPS+GLONASS, GPS+GLONASS+Galileo) dihitung paralel
   async function olah() {
-    setGalat(null);
-    const pilihan = { base, rover, sistem, mode: "kinematic", resetOtomatis: reset };
+    setGalat(null); setHasil(null); onAsli?.(null);
+    const ac = new AbortController(); pembatal.current = ac;
+    const pilihan = { base, rover, mode: "kinematic", resetOtomatis: reset };
+    const t0 = performance.now();
+    setMaju({ G: 0, GR: 0, GRE: 0 }); setProses("Mengolah");
     try {
-      let r;
+      let r = {};
       if (mesin === "server" && server) {
-        setProses("Mengunggah ke server lokal…");
         const { sesi } = await (await fetch(server.url + "/api/sesi", { method: "POST" })).json();
-        for (const b of berkas) await fetch(`${server.url}/api/unggah?sesi=${sesi}&nama=${encodeURIComponent(b.nama)}`, { method: "POST", body: b.isi });
-        setProses("RTKLIB (native) sedang mengolah tiga lapis…");
-        const res = await fetch(server.url + "/api/olah", { method: "POST", headers: { "content-type": "application/json" },
-          body: JSON.stringify({ sesi, ...pilihan, nav: berkas.filter((b) => b.header.tipe !== "O").map((b) => b.nama) }) });
-        r = await res.json(); if (!res.ok) throw new Error(r.error);
+        for (const b of berkas) await fetch(`${server.url}/api/unggah?sesi=${sesi}&nama=${encodeURIComponent(b.nama)}`, { method: "POST", body: b.isi, signal: ac.signal });
+        for (const k of Object.keys(KONSTELASI)) {
+          const res = await fetch(server.url + "/api/olah", { method: "POST", headers: { "content-type": "application/json" }, signal: ac.signal,
+            body: JSON.stringify({ sesi, ...pilihan, sistem: k, nav: berkas.filter((b) => b.header.tipe !== "O").map((b) => b.nama) }) });
+          r[k] = await res.json(); if (!res.ok) throw new Error(r[k].error);
+          setMaju((m) => ({ ...m, [k]: 1 }));
+        }
       } else {
-        r = await olahDiBrowser(berkas, pilihan, setProses);
+        r = await olahDiBrowser(berkas, pilihan, setMaju, ac.signal);
       }
-      setHasil(keKolom(r)); setContoh(false); onAsli?.(null);
+      setHasil({ ...Object.fromEntries(Object.entries(r).map(([k, v]) => [k, keKolom(v)])), detik: (performance.now() - t0) / 1000 });
+      setTab("GR");
       setTimeout(() => keHasil.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);   // langsung tampilkan hasil
-    } catch (e) { setGalat(String(e.message || e)); }
-    setProses(null);
+    } catch (e) {
+      setGalat(ac.signal.aborted ? "Pengolahan dibatalkan." : String(e.message || e));
+    }
+    setProses(null); setMaju(null); pembatal.current = null;
   }
 
   const obs = berkas.filter((f) => f.header.tipe === "O");
@@ -136,32 +146,74 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
           <div className="form">
             <label>Base (titik acuan, koordinat resmi BIG)<select value={base} onChange={(e) => { setBase(e.target.value); setManual(true); }}><option value="">pilih</option>{obs.map((f) => <option key={f.nama} value={f.nama}>{f.header.marker} · {f.nama}</option>)}</select></label>
             <label>Rover (titik yang dipantau)<select value={rover} onChange={(e) => { setRover(e.target.value); setManual(true); }}><option value="">pilih</option>{obs.map((f) => <option key={f.nama} value={f.nama}>{f.header.marker} · {f.nama}</option>)}</select></label>
-            <div className="lbl">Satelit yang dipakai</div>
-            <div className="seg sm">{[["G", "GPS"], ["GR", "GPS+GLONASS"], ["GRE", "G+R+Galileo"]].map(([k, l]) => <button key={k} className={sistem === k ? "on" : ""} onClick={() => setSistem(k)}>{l}</button>)}</div>
             {server && <>
               <div className="lbl">Mesin</div>
               <div className="seg sm">{[["browser", "Browser"], ["server", "Server lokal"]].map(([k, l]) => <button key={k} className={mesin === k ? "on" : ""} onClick={() => setMesin(k)}>{l}</button>)}</div>
             </>}
           </div>
         )}
-        <button className="btn besar" id="tombol-olah" disabled={!bisa} onClick={olah}>{proses ? "Sedang mengolah…" : "▶ Olah data"}</button>
+        {!proses && <button className="btn besar" id="tombol-olah" disabled={!bisa} onClick={olah}>{hasil ? "↻ Olah ulang" : "▶ Olah data"}</button>}
+        {!proses && bisa && <p className="muted small">Sekali olah langsung menghitung 3 pilihan satelit: GPS, GPS+GLONASS, dan GPS+GLONASS+Galileo.</p>}
         {!bisa && !proses && <p className="muted small">{kurang}</p>}
-        <button className="linkbtn" onClick={() => { setBerkas([]); setBase(""); setRover(""); setManual(false); setHasil(null); setGalat(null); onAsli?.(null); }}>Hapus semua file</button>
+        {!proses && <button className="linkbtn" onClick={() => { setBerkas([]); setBase(""); setRover(""); setManual(false); setHasil(null); setGalat(null); onAsli?.(null); }}>Hapus semua file</button>}
       </>}
-      {proses && <div className="progres"><span className="spin" />{proses}<small>Data 24 jam butuh ±1 menit. Jangan tutup halaman.</small></div>}
+      {proses && maju && <Progres maju={maju} onBatal={() => pembatal.current?.abort()} />}
       {galat && <p className="err">{galat}</p>}
 
       <div ref={keHasil} />
-      {hasil && <Hasil h={hasil} contoh={contoh} onAsli={onAsli} asliAktif={asliAktif} />}
+      {hasil && <>
+        <Banding hasil={hasil} />
+        <div className="seg sm full tabk">{Object.entries(KONSTELASI).map(([k, l]) => hasil[k] && <button key={k} className={tab === k ? "on" : ""} onClick={() => { setTab(k); onAsli?.(null); }}>{k === "GRE" ? "G+R+Galileo" : l}</button>)}</div>
+        <Hasil h={hasil[tab]} onAsli={onAsli} asliAktif={asliAktif} />
+      </>}
       {uji && <button className="linkbtn" onClick={() => setLihatBukti((x) => !x)}>{lihatBukti ? "Sembunyikan" : "Lihat"} bukti validasi pengolahan</button>}
       {uji && lihatBukti && <Integritas uji={uji} deteksi={deteksi} />}
     </>
   );
 }
 
-const LABEL_LAPIS = { epoch: ["Per epoch (30 dtk)", "gerakan besar / gempa"], jam2: ["Jendela 2 jam", "pergeseran 2–4 cm"], harian: ["Harian (24 jam)", "gerakan lambat < 1 cm"] };
+function Progres({ maju, onBatal }) {
+  const total = (Object.values(maju).reduce((a, b) => a + b, 0) / Object.keys(maju).length) || 0;
+  return (
+    <div className="progres2">
+      <div className="ph"><b><span className="spin" />Mengolah dengan RTKLIB… {Math.round(total * 100)}%</b><button className="batal" onClick={onBatal}>Batalkan</button></div>
+      <div className="bar"><i style={{ width: `${total * 100}%` }} /></div>
+      {Object.entries(maju).map(([k, f]) => (
+        <div className="sub" key={k}><span>{KONSTELASI[k]}</span><div className="bar kecil"><i style={{ width: `${f * 100}%` }} /></div><span className="mono">{Math.round(f * 100)}%</span></div>
+      ))}
+      <small>Tiga pilihan satelit diolah bersamaan. Data 24 jam ±1–2 menit; jangan tutup halaman.</small>
+    </div>
+  );
+}
 
-function Hasil({ h, contoh, onAsli, asliAktif }) {
+/** Perbandingan ketiga konstelasi dari data yang sama: inilah manfaat multi-GNSS. */
+function Banding({ hasil }) {
+  const ks = Object.keys(KONSTELASI).filter((k) => hasil[k]);
+  const m = (k) => hasil[k].meta;
+  const h = (k) => { const s = m(k).stat_epoch; return s?.e ? Math.hypot(s.e.sb_robust_mm, s.n.sb_robust_mm) / 10 : null; };
+  const v = (k) => m(k).stat_epoch?.u ? m(k).stat_epoch.u.sb_robust_mm / 10 : null;
+  const baris = [
+    ["Satelit terlihat (rata-rata)", (k) => fmt(m(k).satelit_rata), "lebih banyak = lebih kuat"],
+    ["Ambiguitas fix", (k) => `${fmt(m(k).fix_persen)}%`, "makin tinggi makin teliti"],
+    ["Ketelitian horizontal per epoch", (k) => (h(k) != null ? `±${fmt(h(k))} cm` : "tidak fix"), "makin kecil makin baik"],
+    ["Ketelitian vertikal per epoch", (k) => (v(k) != null ? `±${fmt(v(k))} cm` : "tidak fix"), "makin kecil makin baik"],
+    ["Filter diulang (divergen)", (k) => `${m(k).reset_filter.length}×`, ""],
+  ];
+  return (
+    <>
+      <div className="label">PERBANDINGAN PILIHAN SATELIT · DATA YANG SAMA</div>
+      <div className="table banding">
+        <div className="tr th"><span>Dari data yang sama</span>{ks.map((k) => <span key={k}>{k === "G" ? "GPS" : k === "GR" ? "G+R" : "G+R+E"}</span>)}</div>
+        {baris.map(([l, f]) => <div className="tr" key={l}><span>{l}</span>{ks.map((k) => <span key={k} className="mono">{f(k)}</span>)}</div>)}
+      </div>
+      <p className="muted small">Pada data Ina-CORS ini (RINEX 2.11) Galileo hanya satu frekuensi, jadi Galileo menambah jumlah satelit tetapi belum bisa di-fix; hasil terbaik biasanya GPS+GLONASS. Klik tab di bawah untuk melihat detail tiap pilihan.</p>
+    </>
+  );
+}
+
+const LABEL_LAPIS = { epoch: ["Per epoch (30 dtk)", "gerakan besar / gempa"], jam2: ["Rata-rata 2 jam", "pergeseran 2–4 cm"], harian: ["Harian (24 jam)", "gerakan lambat < 1 cm"] };
+
+function Hasil({ h, onAsli, asliAktif }) {
   const m = h.meta;
   const [conf, setConf] = useState(null);
   const st = m.status || {};
@@ -199,17 +251,10 @@ function Hasil({ h, contoh, onAsli, asliAktif }) {
       <p className="muted small">Biru = ambiguitas fix, abu-abu = float. Garis putus = ±3σ (robust) data ini. Ambang alarm lapis ini 10 cm bertahan ≥ 10 menit (lompatan singkat akibat salah fix diabaikan).</p>
 
       {m.jendela_2jam?.length > 0 && <>
-        <div className="label">JENDELA 2 JAM · AMBANG 2,5 / 5 CM (VERTIKAL 5 / 10 CM)</div>
+        <div className="label">RATA-RATA TIAP 2 JAM · AMBANG 2,5 / 5 CM</div>
         <JendelaChart w={m.jendela_2jam} />
+        <p className="muted small">Satu titik = posisi rata-rata selama 2 jam (12 titik per hari). Merata-rata membuat derau per 30 detik hilang, sehingga pergeseran kecil 2–4 cm bisa terdeteksi. Garis oranye = waspada (2,5 cm), merah = bahaya (5 cm); vertikal memakai ambang 2×. Lingkaran kosong = solusi belum fix (diabaikan).</p>
       </>}
-
-      {m.harian_mm && (
-        <div className="table">
-          <div className="tr th"><span>SOLUSI HARIAN vs KOORDINAT RESMI BIG</span><span>mm</span></div>
-          <div className="tr"><span>E / N / U</span><span className="mono">{fmt(m.harian_mm[0])} / {fmt(m.harian_mm[1])} / {fmt(m.harian_mm[2])}</span></div>
-          <div className="tr note2"><span>Selisih U ini bias koordinat acuan (dikonfirmasi AUSPOS), bukan gerakan. Karena itu status memakai titik nol.</span></div>
-        </div>
-      )}
 
       {onAsli && h.t?.length > 0 && <button className={`btn ${asliAktif ? "ghost" : ""}`} onClick={() => onAsli(asliAktif ? null : h)}>{asliAktif ? "Hentikan data asli di digital twin" : `Putar data asli ${m.rover.kode} di GNSS-P2`}</button>}
 
