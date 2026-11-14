@@ -3,9 +3,10 @@
 // Bila server lokal aktif (node server/server.mjs), bisa memakai rnx2rtkp native.
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "./icons.jsx";
-import { Badge } from "./ui.jsx";
+import { Chip } from "./ui.jsx";
 import { fmt } from "./data.js";
 import { periksaBerkas, olahDiBrowser, KONSTELASI } from "./gnss/browser.js";
+import { geodetik, geserLokal, keUTM } from "./gnss/utm.js";
 
 async function cariServer() {
   for (const s of ["", "http://localhost:8787"]) {
@@ -25,6 +26,16 @@ export function keKolom(r) {
   const kol = { t: b.map((x) => (x.t - t0) / 1000) };
   for (const k of ["de", "dn", "du"]) kol[k] = b.map((x) => Math.round(x[k] * 10000) / 10);
   kol.q = b.map((x) => x.q); kol.ns = b.map((x) => x.ns);
+  // koordinat absolut tiap epoch: acuan rover (ECEF) + geser lokal e/n/u → geodetik → UTM
+  const xa = r.rover?.xyz_acuan;
+  if (xa) {
+    const g0 = geodetik(xa), zona = keUTM(g0.lat, g0.lon).zona;
+    const utm = (e, n, u) => { const g = geserLokal(g0, e, n, u), p = keUTM(g.lat, g.lon, zona); return [p.E, p.N, g.h]; };
+    const c = b.map((x) => utm(x.e, x.n, x.u));
+    kol.E = c.map((v) => v[0]); kol.N = c.map((v) => v[1]); kol.h = c.map((v) => v[2]);
+    const nol = (r.titik_nol_mm || [0, 0, 0]).map((v) => v / 1000);
+    kol.awal = { zona, sumber: r.harian_mm ? "titik nol · solusi harian" : "titik nol · median solusi fix", xyz: utm(...nol) };
+  }
   const { baris, ...meta } = r;
   return { meta, t0, ...kol };
 }
@@ -57,17 +68,21 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
     fetch("./data/uji_integritas.json?v=" + __VERSI__).then((r) => (r.ok ? r.json() : null)).then(setUji).catch(() => {});
   }, [dimuat]);
 
+  // base otomatis: CBTL bila ada, kalau tidak stasiun Ina-CORS pertama yang dikenal; rover = observasi lainnya
+  function aturPeran(semua) {
+    setBerkas(semua);
+    const o = semua.filter((f) => f.header.tipe === "O");
+    const bs = (manual && o.find((f) => f.nama === base)) || o.find((f) => f.header.marker === "CBTL") || o.find((f) => f.dikenal) || o[0];
+    const rv = (manual && o.find((f) => f.nama === rover && f.nama !== bs?.nama)) || o.find((f) => f !== bs && f.header.marker === "CPTS") || o.find((f) => f !== bs);
+    setBase(bs?.nama || ""); setRover(rv?.nama || "");
+  }
+  function hapusBerkas(nama) { aturPeran(berkas.filter((f) => f.nama !== nama)); setGalat(null); }
+
   async function tambah(list) {
     setGalat(null); setProses("Membaca header RINEX…");
     try {
       const b = await periksaBerkas(list);
-      const semua = [...berkas.filter((y) => !b.some((z) => z.nama === y.nama)), ...b];
-      setBerkas(semua);
-      // base otomatis: CBTL bila ada, kalau tidak stasiun Ina-CORS pertama yang dikenal; rover = observasi lainnya
-      const o = semua.filter((f) => f.header.tipe === "O");
-      const bs = (manual && semua.find((f) => f.nama === base)) || o.find((f) => f.header.marker === "CBTL") || o.find((f) => f.dikenal) || o[0];
-      const rv = (manual && semua.find((f) => f.nama === rover && f.nama !== bs?.nama)) || o.find((f) => f !== bs && f.header.marker === "CPTS") || o.find((f) => f !== bs);
-      setBase(bs?.nama || ""); setRover(rv?.nama || "");
+      aturPeran([...berkas.filter((y) => !b.some((z) => z.nama === y.nama)), ...b]);
       const bukan = b.filter((f) => !["O", "N", "G", "M"].includes(f.header.tipe));
       if (bukan.length) setGalat(`${bukan.map((f) => f.nama).join(", ")}: bukan file RINEX observasi/navigasi`);
     } catch (e) { setGalat(String(e.message || e)); }
@@ -128,14 +143,15 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
       </div>
 
       {berkas.length > 0 && (
-        <div className="table">
-          <div className="tr th"><span>FILE</span><span>ISI HEADER</span></div>
+        <div className="table berkas">
+          <div className="tr th f3"><span>FILE</span><span>ISI HEADER</span><span /></div>
           {berkas.map((f) => (
-            <div className="tr fi" key={f.nama}>
+            <div className="tr fi f3" key={f.nama}>
               <span><b className="mono">{f.nama}</b><small>{PERAN[f.header.tipe] || f.header.tipe} · RINEX {f.header.versi} · {(f.ukuran / 1e6).toFixed(1)} MB</small></span>
               <span className="r">{f.header.tipe === "O"
                 ? <>{f.header.marker}{f.dikenal ? " ✓" : ""} · {f.header.antena}<small>tinggi header {fmt(f.header.tinggi, 3)} m{f.header.interval ? ` · ${f.header.interval} dtk` : ""}</small></>
                 : <small>{f.header.sistem === "M" ? "gabungan GPS+GLONASS+Galileo+BeiDou" : f.header.tipe === "G" ? "GLONASS" : "GPS"}</small>}</span>
+              <button className="hapus-f" aria-label={`Hapus ${f.nama}`} title="Hapus file" disabled={!!proses} onClick={() => hapusBerkas(f.nama)}>×</button>
             </div>
           ))}
         </div>
@@ -169,7 +185,7 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
       {hasil && <>
         <Banding hasil={hasil} />
         <div className="seg sm full tabk">{Object.entries(KONSTELASI).map(([k, l]) => hasil[k] && <button key={k} className={tab === k ? "on" : ""} onClick={() => { setTab(k); onAsli?.(null); }}>{k === "GRE" ? "G+R+Galileo" : l}</button>)}</div>
-        <Hasil h={hasil[tab]} onAsli={onAsli} asliAktif={asliAktif} />
+        <Hasil h={hasil[tab]} />
       </>}
       {uji && <button className="linkbtn" onClick={() => setLihatBukti((x) => !x)}>{lihatBukti ? "Sembunyikan" : "Lihat"} bukti validasi pengolahan</button>}
       {uji && lihatBukti && <Integritas uji={uji} deteksi={deteksi} />}
@@ -183,9 +199,9 @@ function Progres({ maju, onBatal }) {
     <div className="progres2">
       <div className="ph"><b><span className="spin" />Mengolah dengan RTKLIB… {Math.round(total * 100)}%</b><button className="batal" onClick={onBatal}>Batalkan</button></div>
       <div className="bar"><i style={{ width: `${total * 100}%` }} /></div>
-      {Object.entries(maju).map(([k, f]) => (
+      <div className="subs">{Object.entries(maju).map(([k, f]) => (
         <div className="sub" key={k}><span>{KONSTELASI[k]}</span><div className="bar kecil"><i style={{ width: `${f * 100}%` }} /></div><span className="mono">{Math.round(f * 100)}%</span></div>
-      ))}
+      ))}</div>
       <small>{Object.keys(maju).length > 1 ? `${Object.keys(maju).length} pilihan satelit diolah bersamaan. ` : ""}Data 24 jam ±1–2 menit; jangan tutup halaman.</small>
     </div>
   );
@@ -217,13 +233,8 @@ function Banding({ hasil }) {
   );
 }
 
-const LABEL_LAPIS = { epoch: ["Per epoch (30 dtk)", "gerakan besar / gempa"], jam2: ["Rata-rata 2 jam", "pergeseran 2–4 cm"], harian: ["Harian (24 jam)", "gerakan lambat < 1 cm"] };
-
-function Hasil({ h, onAsli, asliAktif }) {
+function Hasil({ h }) {
   const m = h.meta;
-  const [conf, setConf] = useState(null);
-  const st = m.status || {};
-  const sE = m.stat_epoch, s2 = m.stat_2jam;
   return (
     <>
       <div className="label">HASIL OLAHAN</div>
@@ -234,97 +245,62 @@ function Hasil({ h, onAsli, asliAktif }) {
         <div className="tr"><span>Waktu olah (3 lapis)</span><span className="mono">{fmt(m.waktu_olah_detik, 1)} dtk · {fmt(m.ms_per_epoch, 1)} ms/epoch</span></div>
         <div className="tr"><span>Filter diulang</span><span className="mono">{m.reset_filter.length ? m.reset_filter.map((r) => r.waktu.slice(11, 16)).join(", ") : "tidak perlu"}</span></div>
       </div>
-      {m.peringatan?.length > 0 && <div className="warnbox">{m.peringatan.map((p) => <p key={p}>⚠ {p}</p>)}</div>}
-
-      <div className="label">STATUS TIGA LAPIS · RELATIF TITIK NOL</div>
-      <div className="lapis">
-        {["epoch", "jam2", "harian"].map((k) => (
-          <div key={k} className="lp">
-            <div className="lph"><b>{LABEL_LAPIS[k][0]}</b>{k === "harian" ? <span className="badge acuan"><i />ACUAN</span> : <Badge status={st[k]?.status || "aman"} />}</div>
-            <small>{LABEL_LAPIS[k][1]}</small>
-            <span className="mono">
-              {k === "epoch" && sE?.e && `σ ${fmt(sE.e.sb_robust_mm / 10)} / ${fmt(sE.n.sb_robust_mm / 10)} / ${fmt(sE.u.sb_robust_mm / 10)} cm`}
-              {k === "jam2" && (s2 ? `σ ${fmt(s2.e.sb_robust_mm / 10)} / ${fmt(s2.n.sb_robust_mm / 10)} / ${fmt(s2.u.sb_robust_mm / 10)} cm` : "–")}
-              {k === "harian" && m.harian_mm && "= titik nol"}
-            </span>
-            <small className="why">{k === "harian" ? "Solusi 24 jam menjadi titik nol; lapis lain dibandingkan dengannya." : st[k]?.alasan}</small>
-          </div>
-        ))}
-      </div>
-
-      <div className="label">PER EPOCH · E / N / U TERHADAP TITIK NOL</div>
-      <EnuChart h={h} />
-      <p className="muted small">Biru = ambiguitas fix, abu-abu = float. Garis putus = ±3σ (robust) data ini. Ambang alarm lapis ini 10 cm bertahan ≥ 10 menit (lompatan singkat akibat salah fix diabaikan).</p>
-
-      {m.jendela_2jam?.length > 0 && <>
-        <div className="label">RATA-RATA TIAP 2 JAM · AMBANG 2,5 / 5 CM</div>
-        <JendelaChart w={m.jendela_2jam} />
-        <p className="muted small">Satu titik = posisi rata-rata selama 2 jam (12 titik per hari). Merata-rata membuat derau per 30 detik hilang, sehingga pergeseran kecil 2–4 cm bisa terdeteksi. Garis oranye = waspada (2,5 cm), merah = bahaya (5 cm); vertikal memakai ambang 2×. Lingkaran kosong = solusi belum fix (diabaikan).</p>
-      </>}
-
-      {onAsli && h.t?.length > 0 && <button className={`btn ${asliAktif ? "ghost" : ""}`} onClick={() => onAsli(asliAktif ? null : h)}>{asliAktif ? "Hentikan data asli di digital twin" : `Putar data asli ${m.rover.kode} di GNSS-2T`}</button>}
-
-      {m.konfigurasi && <div className="chips">{Object.keys(m.konfigurasi).map((k) => <button key={k} className={`chip ${conf === k ? "on" : ""}`} onClick={() => setConf(conf === k ? null : k)}>Konfigurasi {k === "jam2" ? "2 jam" : k}</button>)}</div>}
-      {conf && <pre className="conf">{m.konfigurasi[conf]}</pre>}
+      {h.E && <Koordinat h={h} />}
+      {h.t?.length > 0 && <Gerak h={h} />}
     </>
   );
 }
 
-function rentang(arr, minAbs) {
-  const s = [...arr].sort((a, b) => a - b);
-  const lo = Math.min(-minAbs, s[Math.floor(s.length * 0.005)] ?? 0), hi = Math.max(minAbs, s[Math.min(s.length - 1, Math.floor(s.length * 0.995))] ?? 0);
-  const pad = (hi - lo) * 0.1; return [lo - pad, hi + pad];
-}
+const jamGPST = (h, i) => new Date(h.t0 + h.t[i] * 1000).toISOString().slice(11, 19);
+const m3 = (v) => v.toLocaleString("id", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 
-function EnuChart({ h }) {
-  const W = 368, H = 92, L = 38, R = 8;
-  const jam = h.t.map((s) => s / 3600), maxJ = Math.max(24, jam[jam.length - 1] || 24);
-  const X = (v) => L + (v / maxJ) * (W - L - R);
-  const sE = h.meta.stat_epoch || {};
+/** Koordinat rover per epoch (UTM + tinggi elipsoid), baris pertama = koordinat awal (titik nol) */
+function Koordinat({ h }) {
+  const a = h.awal;
   return (
-    <div className="enu">
-      {[["e", "E"], ["n", "N"], ["u", "U"]].map(([k, lab]) => {
-        const y = h["d" + k], a = (sE[k]?.sb_robust_mm ?? 10) * 3;
-        const [lo, hi] = rentang(y.filter((_, i) => h.q[i] === 1), a * 1.4);
-        const Y = (v) => 6 + (1 - (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * (H - 22);
-        let fx = "", fl = "";
-        for (let i = 0; i < y.length; i++) { const p = `M${X(jam[i]).toFixed(1)} ${Y(y[i]).toFixed(1)}h0`; if (h.q[i] === 1) fx += p; else fl += p; }
-        const tk = [Math.round(lo / 10) * 10, 0, Math.round(hi / 10) * 10];
-        return (
-          <svg key={k} viewBox={`0 0 ${W} ${H}`} className="chart" role="img" aria-label={`Komponen ${lab}`}>
-            <text x={4} y={14} className="ax strong">{lab}</text>
-            {tk.map((v, i) => <g key={i}><line x1={L} x2={W - R} y1={Y(v)} y2={Y(v)} className="grid" /><text x={L - 4} y={Y(v) + 3} className="ax" textAnchor="end">{fmt(v / 10, 0)}</text></g>)}
-            {[a, -a].map((v) => <line key={v} x1={L} x2={W - R} y1={Y(v)} y2={Y(v)} stroke="#8A94A6" strokeDasharray="4 3" strokeWidth="1.1" />)}
-            <path d={fl} stroke="#B9C1CC" strokeWidth="2.2" strokeLinecap="round" />
-            <path d={fx} stroke="var(--blue-600)" strokeWidth="2.2" strokeLinecap="round" />
-            {k === "u" && [0, 6, 12, 18, 24].map((j) => <text key={j} x={X(j)} y={H - 3} className="ax" textAnchor="middle">{j}h</text>)}
-          </svg>
-        );
-      })}
-      <small className="ax-unit">cm · jam GPST</small>
-    </div>
+    <>
+      <div className="label">KOORDINAT {h.meta.rover.kode} · UTM {a.zona}S · METER</div>
+      <div className="koord">
+        <div className="kr kh"><span>Waktu</span><span>X (Easting)</span><span>Y (Northing)</span><span>Z (tinggi)</span></div>
+        <div className="kr awal"><span>Awal</span><span>{m3(a.xyz[0])}</span><span>{m3(a.xyz[1])}</span><span>{m3(a.xyz[2])}</span></div>
+        <div className="kbody">
+          {h.E.map((_, i) => (
+            <div className={`kr ${h.q[i] === 1 ? "" : "float"}`} key={i}><span>{jamGPST(h, i)}</span><span>{m3(h.E[i])}</span><span>{m3(h.N[i])}</span><span>{m3(h.h[i])}</span></div>
+          ))}
+        </div>
+      </div>
+      <p className="muted small">Waktu dalam GPST, Z = tinggi elipsoid. Awal = {a.sumber}. {h.E.length.toLocaleString("id")} epoch; baris abu-abu = ambiguitas belum fix (float). Gulir untuk melihat semua.</p>
+    </>
   );
 }
 
-function JendelaChart({ w }) {
-  const W = 368, H = 120, L = 38, R = 8, T = 8, B = 20;
-  const t0 = w[0].t - 3600e3, X = (t) => L + ((t - t0) / 86400e3) * (W - L - R);
-  const lo = -10, hi = 10, Y = (v) => T + (1 - (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * (H - T - B);
-  const warna = { e: "#1479BB", n: "#25245A", u: "#B86B00" };
+/** Pergerakan E/N/U terhadap koordinat awal sepanjang waktu akuisisi RINEX (gaya grafik sensor) */
+function Gerak({ h }) {
+  const [k, setK] = useState("de");
+  const y = h[k].map((v) => v / 10), fix = y.filter((_, i) => h.q[i] === 1);
+  const s = [...(fix.length ? fix : y)].sort((a, b) => a - b);
+  let lo = Math.min(-1, s[Math.floor(s.length * 0.005)]), hi = Math.max(1, s[Math.floor(s.length * 0.995)]);
+  const pad = (hi - lo) * 0.12; lo -= pad; hi += pad;
+  const W = 368, H = 190, L = 36, Rr = 10, T = 12, B = 26, tN = h.t[h.t.length - 1] || 1;
+  const X = (t) => L + (t / tN) * (W - L - Rr), Y = (v) => T + (1 - (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * (H - T - B);
+  let fx = "", fl = "";
+  for (let i = 0; i < y.length; i++) { const p = `M${X(h.t[i]).toFixed(1)} ${Y(y[i]).toFixed(1)}h0`; if (h.q[i] === 1) fx += p; else fl += p; }
+  const tk = [lo + pad, 0, hi - pad], jT = [0, 0.25, 0.5, 0.75, 1].map((f) => h.t.findIndex((t) => t >= f * tN));
   return (
-    <div className="enu">
-      <svg viewBox={`0 0 ${W} ${H}`} className="chart" role="img" aria-label="Solusi jendela 2 jam">
-        {[-10, -5, 0, 5, 10].map((v) => <g key={v}><line x1={L} x2={W - R} y1={Y(v)} y2={Y(v)} className="grid" /><text x={L - 4} y={Y(v) + 3} className="ax" textAnchor="end">{v}</text></g>)}
-        {[2.5, -2.5].map((v) => <line key={v} x1={L} x2={W - R} y1={Y(v)} y2={Y(v)} stroke="var(--waspada)" strokeDasharray="4 3" strokeWidth="1.2" />)}
-        {[5, -5].map((v) => <line key={v} x1={L} x2={W - R} y1={Y(v)} y2={Y(v)} stroke="var(--bahaya)" strokeDasharray="4 3" strokeWidth="1.2" />)}
-        {["e", "n", "u"].map((k, j) => w.map((p, i) => {
-          const x = X(p.t) + (j - 1) * 5, y = Y(p["d" + k] / 10);
-          return p.q === 1 ? <circle key={k + i} cx={x} cy={y} r="3.2" fill={warna[k]} /> : <circle key={k + i} cx={x} cy={y} r="3" fill="#fff" stroke="#B9C1CC" strokeWidth="1.5" />;
-        }))}
-        {[0, 6, 12, 18, 24].map((j) => <text key={j} x={X(t0 + j * 3600e3)} y={H - 4} className="ax" textAnchor="middle">{j}h</text>)}
-      </svg>
-      <small className="ax-unit"><b style={{ color: warna.e }}>● E</b> <b style={{ color: warna.n }}>● N</b> <b style={{ color: warna.u }}>● U</b> · cm</small>
-    </div>
+    <>
+      <div className="label">PERGERAKAN TERHADAP KOORDINAT AWAL</div>
+      <div className="chips">{[["de", "Timur (E)"], ["dn", "Utara (N)"], ["du", "Tinggi (U)"]].map(([c, l]) => <Chip key={c} active={k === c} onClick={() => setK(c)}>{l}</Chip>)}</div>
+      <div className="card flat">
+        <svg viewBox={`0 0 ${W} ${H}`} className="chart" role="img" aria-label="Grafik pergerakan">
+          {tk.map((v, i) => <g key={i}><line x1={L} x2={W - Rr} y1={Y(v)} y2={Y(v)} className="grid" /><text x={4} y={Y(v) + 4} className="ax">{fmt(v)}</text></g>)}
+          <path d={fl} stroke="#B9C1CC" strokeWidth="2" strokeLinecap="round" />
+          <path d={fx} stroke="#1479BB" strokeWidth="2" strokeLinecap="round" />
+          {jT.map((i, j) => i >= 0 && <text key={j} x={X(h.t[i])} y={H - 6} className="ax" textAnchor={j === 0 ? "start" : j === 4 ? "end" : "middle"}>{jamGPST(h, i).slice(0, 5)}</text>)}
+          <text x={W - Rr} y={T + 2} className="ax" textAnchor="end">cm</text>
+        </svg>
+      </div>
+      <p className="muted small">Waktu mengikuti akuisisi RINEX ({jamGPST(h, 0).slice(0, 5)}–{jamGPST(h, h.t.length - 1).slice(0, 5)} GPST). Biru = fix, abu-abu = float.</p>
+    </>
   );
 }
 
