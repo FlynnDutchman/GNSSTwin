@@ -1,0 +1,86 @@
+[
+ {
+  "n": "g01_sensor_sim",
+  "t": "t -10 dtk dari awal gempa"
+ },
+ {
+  "n": "g02_sensor_sim",
+  "t": "t -6 dtk dari awal gempa"
+ },
+ {
+  "n": "g03_sensor_sim",
+  "t": "t -3 dtk dari awal gempa"
+ },
+ {
+  "n": "g04_sensor_sim",
+  "t": "t +0 dtk dari awal gempa"
+ },
+ {
+  "n": "g05_sensor_sim",
+  "t": "t +2 dtk dari awal gempa"
+ },
+ {
+  "n": "g06_sensor_sim",
+  "t": "t +4 dtk dari awal gempa"
+ },
+ {
+  "n": "g07_sensor_sim",
+  "t": "t +6 dtk dari awal gempa"
+ },
+ {
+  "n": "g08_sensor_sim",
+  "t": "t +8 dtk dari awal gempa"
+ },
+ {
+  "n": "g09_sensor_sim",
+  "t": "t +10 dtk dari awal gempa"
+ },
+ {
+  "n": "g10_sensor_sim",
+  "t": "t +12 dtk dari awal gempa"
+ },
+ {
+  "n": "g11_sensor_sim",
+  "t": "t +14 dtk dari awal gempa"
+ },
+ {
+  "n": "g12_sensor_sim",
+  "t": "t +16 dtk dari awal gempa"
+ },
+ {
+  "n": "g13_sensor_sim",
+  "t": "t +18 dtk dari awal gempa"
+ },
+ {
+  "n": "g14_sensor_sim",
+  "t": "t +19 dtk dari awal gempa"
+ },
+ {
+  "n": "g15_sensor_sim",
+  "t": "t +21 dtk dari awal gempa"
+ },
+ {
+  "n": "g16_sensor_sim",
+  "t": "t +24 dtk dari awal gempa"
+ },
+ {
+  "n": "g17_sensor_sim",
+  "t": "t +28 dtk dari awal gempa"
+ },
+ {
+  "n": "g18_sensor_sim",
+  "t": "t +34 dtk dari awal gempa"
+ },
+ {
+  "n": "g19_sensor_sim",
+  "t": "t +42 dtk dari awal gempa"
+ },
+ {
+  "n": "g20_sensor_sim",
+  "t": "t +55 dtk dari awal gempa"
+ },
+ {
+  "n": "g21_sensor_sim",
+  "t": "t +77 dtk dari awal gempa"
+ }
+]
