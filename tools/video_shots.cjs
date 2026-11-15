@@ -9,6 +9,7 @@ const log = [];
   const p = await b.newPage({ viewport: { width: 1600, height: 900 }, deviceScaleFactor: 2 });
   p.setDefaultTimeout(60000);
   const tunggu = async (ms = 30000) => {
+    if (process.env.GT_FAST) ms = 1500;
     const t0 = Date.now(); let ok = 0;
     while (Date.now() - t0 < ms) {
       const s = await p.evaluate(() => { const v = window.__gnsstwin; if (!v) return false; v.scene.requestRender(); return v.scene.globe.tilesLoaded; }).catch(() => false);
@@ -33,7 +34,8 @@ const log = [];
     v.camera.setView({ destination: { x: X + dx, y: Y + dy, z: Z + dz }, orientation: { heading: H, pitch: P, roll: 0 } });
     v.scene.requestRender();
   }, [lon, lat, h, hd, pt, r]);
-  const PUSAT = [110.31540, -7.98946, 10], G2T = [110.3154365, -7.98953075, 14];
+  const PUSAT = [110.31540, -7.98946, 10], G2T = [110.3154365, -7.98953075, 13.2];
+  const FAST = !!process.env.GT_FAST;
 
   await p.goto(URL, { waitUntil: "networkidle" });
   await p.waitForFunction(() => !!window.__gnsstwin, null, { timeout: 120000 });
@@ -45,16 +47,18 @@ const log = [];
     await p.click(`aside.panel .chips >> text=${j}`).catch(() => {}); await p.waitForTimeout(700); await snap(k);
   }
   // ---------- B. kamera mendekat ke stasiun GNSS-2T (dipakai juga untuk adegan rover)
-  const jalur = [[430, -22], [300, -21], [200, -20], [130, -19], [85, -18], [55, -16], [36, -14], [26, -12]];
-  for (let k = 0; k < jalur.length; k++) {
+  const jalur = [430, 280, 170, 100, 58, 33, 19, 11];
+  if (!FAST) for (let k = 0; k < jalur.length; k++) {
     const f = k / (jalur.length - 1);
-    const c = PUSAT.map((v, i) => v + (G2T[i] - v) * Math.min(1, f * 1.4));
-    await kamera(c[0], c[1], c[2], -55 + 10 * f, jalur[k][1], jalur[k][0]); await tunggu(20000);
+    const c = PUSAT.map((v, i) => v + (G2T[i] - v) * Math.min(1, f * 1.5));
+    await kamera(c[0], c[1], c[2], -55 - 5 * f, -22, jalur[k]); await tunggu(20000);
     await snap(`b${String(k + 1).padStart(2, "0")}_zoom`);
   }
-  await chip("Sensor"); await tunggu(8000); await snap("b20_rover_tanpa_pin"); await chip("Sensor");
-  await kamera(G2T[0], G2T[1], G2T[2], -100, -10, 22); await tunggu(15000); await snap("b21_rover_samping");
-  await chip("Sensor"); await tunggu(8000); await snap("b22_rover_samping_tanpa_pin"); await chip("Sensor");
+  await chip("Sensor"); await tunggu(8000); await snap("b20_rover_tanpa_pin");
+  await kamera(...G2T, -120, -9, 9); await tunggu(15000); await snap("b21_rover_samping");
+  await kamera(...G2T, 200, -15, 11); await tunggu(15000); await snap("b22_rover_sepanjang");
+  await kamera(...G2T, -60, -14, 7); await tunggu(15000); await snap("b23_rover_dekat");
+  await chip("Sensor");
   await kamera(...PUSAT, -55, -22, 430); await tunggu(15000);
   // ---------- C. sensor GNSS-2T, grafik berjalan (mode normal, 5x)
   await nav("Sensor"); await p.click(`aside.panel .row:has-text("GNSS-2T")`); await p.waitForTimeout(800);
