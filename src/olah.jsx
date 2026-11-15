@@ -187,8 +187,6 @@ export function DataPanel({ aktif, onAsli, asliAktif }) {
         <div className="seg sm full tabk">{Object.entries(KONSTELASI).map(([k, l]) => hasil[k] && <button key={k} className={tab === k ? "on" : ""} onClick={() => { setTab(k); onAsli?.(null); }}>{k === "GRE" ? "G+R+Galileo" : l}</button>)}</div>
         <Hasil h={hasil[tab]} />
       </>}
-      {uji && <button className="linkbtn" onClick={() => setLihatBukti((x) => !x)}>{lihatBukti ? "Sembunyikan" : "Lihat"} bukti validasi pengolahan</button>}
-      {uji && lihatBukti && <Integritas uji={uji} deteksi={deteksi} />}
     </>
   );
 }
