@@ -26,10 +26,19 @@ const log = [];
   await nav("Gempa"); await p.click(`aside.panel .row:has-text("Sesar Opak")`).catch(async () => { await p.click(".gempa-list .row >> nth=0"); });
   await p.waitForTimeout(1500);
   await nav("Sensor"); await p.click(`aside.panel .row:has-text("GNSS-2T")`); await p.waitForTimeout(800);
-  await p.click(".timeline >> text=Simulasi gempa"); await p.waitForTimeout(300);
-  await nav("Sensor"); await p.click(".timeline >> text=1×").catch(() => {});
-  await tunggu(5000);
-  for (let k = 0; k < 70; k++) { await snap(`g${String(k + 1).padStart(2, "0")}_sensor_sim`); const t = await info(); if (/\+7[0-7] dtk/.test(t)) break; }
+  await p.click(".timeline .play").catch(() => {});             // jeda
+  // geser slider waktu replay (mode gempa, dijeda) ke detik-detik terpilih
+  const T = [-10, -6, -3, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 19, 21, 24, 28, 34, 42, 55, 77];
+  let k = 0;
+  for (const tt of T) {
+    await p.evaluate((tt) => {
+      const el = document.querySelector(".timeline input[type=range]");
+      const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set;
+      set.call(el, String(tt + 20)); el.dispatchEvent(new Event("input", { bubbles: true })); el.dispatchEvent(new Event("change", { bubbles: true }));
+    }, tt);
+    await p.waitForTimeout(500); await tunggu(4000);
+    k++; await snap(`g${String(k).padStart(2, "0")}_sensor_sim`);
+  }
   fs.writeFileSync(`${OUT}/log.json`, JSON.stringify(log, null, 1));
   await b.close();
 })().catch((e) => { console.error(e); fs.writeFileSync(`${OUT}/galat.txt`, String(e.stack || e)); fs.writeFileSync(`${OUT}/log.json`, JSON.stringify(log, null, 1)); process.exit(0); });
