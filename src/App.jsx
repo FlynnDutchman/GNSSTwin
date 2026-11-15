@@ -100,7 +100,7 @@ function Shell({ data: dataAwal }) {
     sensor: <SensorPanel data={data} st={st} i={i} selected={selected} onSelect={setSelected} />,
     gempa: <GempaPanel data={data} st={st} mode={mode} onRun={runScenario} setView={setView} onSelect={setSelected} skId={skId} onPilih={pilihGempa} onReset={reset} />,
     inacors: <InaCORSPanel data={data} st={st} selected={selected} onSelect={setSelected} />,
-    laporan: <LaporanPanel data={data} st={st} mode={mode} />,
+    laporan: <LaporanPanel data={data} st={st} i={i} mode={mode} asli={asli} viewer={viewer} />,
   }[view];
 
   const danger = st.aktif && st.worst === "bahaya";

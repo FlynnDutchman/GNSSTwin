@@ -184,21 +184,36 @@ export function InaCORSPanel({ data, st, selected, onSelect }) {
   );
 }
 
-export function LaporanPanel({ data, st, mode }) {
-  const r = data.skenario.ringkasan;
+export function LaporanPanel({ data, st, i, mode, asli, viewer }) {
+  const [sibuk, setSibuk] = useState(false);
+  const [galat, setGalat] = useState(null);
+  const n = (j) => st.sensors.filter((s) => s.jenis === j).length;
+  const kondisi = mode === "gempa" ? `Replay ${data.skenario.meta.nama} · t ${st.t >= 0 ? "+" : ""}${st.t} dtk`
+    : asli ? `Kondisi normal · GNSS-2T memutar data asli ${asli.meta?.rover?.kode || ""}` : "Kondisi normal (data contoh)";
+  const unduh = async () => {
+    setSibuk(true); setGalat(null);
+    try { const { unduhLaporanSensor } = await import("./laporan.js"); await unduhLaporanSensor({ data, st, i, mode, asli, viewer: viewer?.current }); }
+    catch (e) { setGalat(String(e?.message || e)); }
+    finally { setSibuk(false); }
+  };
   return (
     <>
       <h3 className="title">Laporan</h3>
-      <p className="muted">Dibuat otomatis dari hasil analisis GNSS.</p>
-      {mode === "gempa" && st.aktif ? (
-        <div className="report">
-          <div className="hrow"><Logo size={28} /><div><b>GNSSTwin · Laporan Kejadian</b><small>{data.skenario.meta.nama}</small></div></div>
-          <p><b>Mw {fmt(r.mw_akhir)}</b> (skenario {fmt(data.skenario.meta.mw_input)}) · terdeteksi {r.waktu_deteksi_s} dtk · {r.stasiun_mendeteksi} stasiun</p>
-          <ol>{r.rekomendasi.map((x) => <li key={x}>{x}</li>)}</ol>
-          <p className="muted small">{data.skenario.meta.catatan}</p>
-          <button className="btn" onClick={() => window.print()}>Cetak / simpan PDF</button>
-        </div>
-      ) : <p className="muted pad">Belum ada kejadian. Jalankan skenario gempa dulu.</p>}
+      <p className="muted">Unduh data sensor jembatan sebagai PDF.</p>
+      <div className="report">
+        <div className="hrow"><Logo size={28} /><div><b>Laporan Data Sensor</b><small>{data.aset.nama}</small></div></div>
+        <ol>
+          <li>Tangkapan model 3D jembatan utuh beserta posisi sensor</li>
+          <li>Daftar {st.sensors.length} sensor dan koordinatnya (lintang/bujur, UTM 49S, tinggi)</li>
+          <li>Detail tiap sensor: grafik dan nilai pergeseran ({n("GNSS")} GNSS · {n("Akselerometer")} akselerometer · {n("Tiltmeter")} tiltmeter)</li>
+        </ol>
+        <div className="tr"><span className="muted small">Data yang dipakai</span></div>
+        <p style={{ margin: 0 }}><b>{kondisi}</b></p>
+        <p className="muted small" style={{ margin: 0 }}>Laporan mengikuti data di menu Sensor saat tombol ditekan, termasuk dampak simulasi gempa bila sedang diputar.</p>
+        <button className="btn" disabled={sibuk} onClick={unduh}>{sibuk ? "Menyiapkan laporan…" : "Unduh laporan sensor (PDF)"}</button>
+        <p className="muted small" style={{ margin: 0 }}>Di jendela cetak, pilih tujuan <b>Simpan sebagai PDF</b>.</p>
+        {galat && <p className="muted small" style={{ color: "#C8323A", margin: 0 }}>Gagal membuat laporan: {galat}</p>}
+      </div>
     </>
   );
 }
