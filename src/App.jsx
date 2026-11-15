@@ -104,6 +104,7 @@ function Shell({ data: dataAwal }) {
   }[view];
 
   const danger = st.aktif && st.worst === "bahaya";
+  const amb = data.aset.ambang.geser_perletakan_cm;
   const topBad = st.aktif ? data.skenario.status_komponen.daftar[0] : null;
 
   return (
@@ -180,12 +181,25 @@ function Shell({ data: dataAwal }) {
           </div>
         )}
 
-        <div className="legend">
-          <b>Status</b>
-          <span><i className="aman" />Aman</span><span><i className="waspada" />Waspada</span><span><i className="bahaya" />Bahaya</span>
-          {mode === "gempa" && <small className="exag">Jembatan tetap utuh: dampak tiap komponen ditunjukkan dengan warna (aman / waspada / bahaya). Getaran diperbesar agar terlihat; angka di panel nilai asli.</small>}
-          <small>{BASEMAPS[basemap].credit} · Bangunan © OpenStreetMap · Natural Earth · CesiumJS</small>
+        <div className="legend" aria-label="Status pergeseran jembatan">
+          <div className="lg-h">
+            <span>Status jembatan</span>
+            <b className={st.worst}>{st.worst === "aman" ? "Aman" : st.worst === "waspada" ? "Waspada" : "Bahaya"}</b>
+          </div>
+          <div className="lg-scale">
+            {[
+              ["aman", "Aman", `< ${fmt(amb.waspada)} cm`],
+              ["waspada", "Waspada", `${fmt(amb.waspada)}–${fmt(amb.bahaya)} cm`],
+              ["bahaya", "Bahaya", `≥ ${fmt(amb.bahaya)} cm`],
+            ].map(([k, nama, rentang]) => (
+              <div key={k} className={`lg-seg ${k} ${st.worst === k ? "on" : ""}`}>
+                <i /><span>{nama}</span><small>{rentang}</small>
+              </div>
+            ))}
+          </div>
+          {mode === "gempa" && <p className="lg-note">Getaran di model diperbesar agar terlihat. Angka di panel adalah nilai asli.</p>}
         </div>
+        <div className="credit">{BASEMAPS[basemap].credit} · © OpenStreetMap · Natural Earth · CesiumJS</div>
 
         <div className="timeline">
           <button className="play" aria-label={playing ? "Jeda" : "Putar"} onClick={() => setPlaying((p) => !p)}><Icon name={playing ? "pause" : "play"} size={18} /></button>

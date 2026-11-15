@@ -117,16 +117,28 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .seg { display: flex; background: var(--surface); border-radius: 999px; padding: 4px; box-shadow: var(--shadow); }
 .seg button { border: 0; background: none; border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700; color: var(--muted); }
 .seg button.on { background: var(--blue-600); color: #fff; }
-.readout { position: absolute; right: 20px; bottom: 100px; z-index: 2; background: var(--surface); border-radius: 10px; box-shadow: var(--shadow); padding: 8px 12px; display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--navy-900); }
+.readout { position: absolute; right: 20px; bottom: 108px; z-index: 2; background: var(--surface); border-radius: 10px; box-shadow: var(--shadow); padding: 8px 12px; display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--navy-900); }
 .readout .scale { display: flex; flex-direction: column; gap: 2px; font-size: 11px; }
 .readout .scale i { display: block; height: 4px; min-width: 20px; border: 2px solid var(--navy-900); border-top: 0; }
 .hero.photo { background-size: cover; background-position: center 30%; padding-top: 96px; }
 .hero.photo h2, .hero.photo .eyebrow { text-shadow: 0 1px 4px rgba(0,0,0,.35); }
 .layerchips.low, .tools.low { top: 80px; }
-.legend { position: absolute; left: 20px; bottom: 100px; z-index: 2; background: var(--surface); border-radius: 12px; box-shadow: var(--shadow); padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 12px; max-width: 300px; }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
-.legend i.aman { background: var(--aman); } .legend i.waspada { background: #E0A100; } .legend i.bahaya { background: var(--bahaya); }
-.legend small { width: 100%; color: var(--muted); font-size: 10px; }
+.legend { position: absolute; left: 20px; bottom: 100px; z-index: 2; width: 292px; background: var(--surface); border-radius: 12px; box-shadow: var(--shadow); padding: 11px 14px 12px; }
+.lg-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+.lg-h span { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.lg-h b { font-size: 13px; font-weight: 800; }
+.lg-h b.aman { color: var(--aman); } .lg-h b.waspada { color: var(--waspada); } .lg-h b.bahaya { color: var(--bahaya); }
+.lg-scale { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+.lg-seg { display: flex; flex-direction: column; gap: 3px; opacity: .55; transition: opacity .25s; }
+.lg-seg.on { opacity: 1; }
+.lg-seg i { display: block; height: 5px; border-radius: 2px; margin-bottom: 3px; }
+.lg-seg:first-child i { border-radius: 6px 2px 2px 6px; } .lg-seg:last-child i { border-radius: 2px 6px 6px 2px; }
+.lg-seg.on i { height: 7px; margin-top: -1px; margin-bottom: 2px; }
+.lg-seg.aman i { background: var(--aman); } .lg-seg.waspada i { background: #E0A100; } .lg-seg.bahaya i { background: var(--bahaya); }
+.lg-seg span { font-size: 12px; font-weight: 700; color: var(--text); }
+.lg-seg small { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px; color: var(--muted); }
+.lg-note { margin: 10px 0 0; padding-top: 8px; border-top: 1px solid var(--border); font-size: 10.5px; line-height: 1.4; color: var(--waspada); font-weight: 600; }
+.credit { position: absolute; right: 20px; bottom: 86px; z-index: 2; font-size: 9.5px; color: rgba(27, 30, 61, .7); background: rgba(255, 255, 255, .72); padding: 1px 6px; border-radius: 4px; pointer-events: none; }
 .timeline { position: absolute; left: 20px; right: 20px; bottom: 20px; z-index: 2; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); padding: 12px 16px; display: flex; align-items: center; gap: 14px; }
 .timeline .play { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--blue-600); color: #fff; display: grid; place-items: center; flex: none; }
 .tlt { display: flex; flex-direction: column; min-width: 210px; } .tlt small { font-size: 11px; font-weight: 700; } .tlt small.live { color: var(--aman); } .tlt small.sim { color: var(--waspada); } .tlt b { font-size: 13px; }
@@ -145,6 +157,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .rail > img, .rail .gap { display: none; }
   .ri { width: auto; min-width: 52px; min-height: 52px; font-size: 10px; }
   .legend, .readout { display: none; }
+  .credit { right: 10px; bottom: 108px; max-width: calc(100% - 20px); font-size: 9px; }
   .timeline { left: 10px; right: 10px; bottom: 10px; flex-wrap: wrap; gap: 8px; padding: 10px; }
   .tlt { min-width: 0; flex: 1; }
   .timeline input[type=range] { order: 5; flex-basis: 100%; }
@@ -156,7 +169,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .timeline .chip { display: none; }
   .timeline .btn { padding: 8px 12px; }
 }
-.legend small.exag { color: var(--waspada); font-weight: 600; }
 .toast.low { top: 142px; }
 
 /* Data GNSS – server pengolah */
@@ -195,7 +207,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .badge.acuan { color: var(--blue-600); background: var(--blue-50); }
 .tr.note2 span { color: var(--muted); font-size: 12px; }
 .mapload { position: absolute; inset: 12px; border-radius: 20px; display: grid; place-content: center; grid-auto-flow: column; align-items: center; gap: 4px; color: var(--muted); font-size: 14px; background: linear-gradient(180deg, #dfe8f1, #eef2f6); }
-.cesium-widget-credits { display: none !important; }   /* kredit ditampilkan di legenda */
+.cesium-widget-credits { display: none !important; }   /* kredit ditampilkan di pojok kanan bawah peta */
 .cek { display: flex; flex-wrap: wrap; gap: 6px; }
 .cek span { font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 999px; background: var(--bg); color: var(--muted); }
 .cek span.ok { background: var(--aman-bg); color: var(--aman); }
