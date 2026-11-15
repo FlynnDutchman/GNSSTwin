@@ -197,7 +197,6 @@ function Shell({ data: dataAwal }) {
               </div>
             ))}
           </div>
-          {mode === "gempa" && <p className="lg-note">Getaran di model diperbesar agar terlihat. Angka di panel adalah nilai asli.</p>}
         </div>
         <div className="credit">{BASEMAPS[basemap].credit} · © OpenStreetMap · Natural Earth · CesiumJS</div>
 
