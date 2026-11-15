@@ -1,5 +1,8 @@
 name: Tangkapan layar PPT
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      skrip: { description: 'skrip', default: 'ppt_shots.cjs' }
 permissions: { contents: write }
 jobs:
   shots:
@@ -12,8 +15,9 @@ jobs:
         with: { node-version: 20 }
       - run: npm i --no-save playwright@1.47.2 && npx playwright install --with-deps chromium
       - run: git checkout origin/ppt-data -- data_ppt
-      - run: mkdir -p shots && node tools/ppt_shots.cjs shots
+      - run: mkdir -p shots && node tools/${{ inputs.skrip }} shots
       - name: Foto pendukung (Wikimedia Commons)
+        if: inputs.skrip == 'ppt_shots.cjs'
         run: |
           for f in Prambanan_2006_Damage.jpg Java_Earthquake_hospital.jpg USGS_Shakemap_-_2006_Yogyakarta_earthquake.jpg; do
             curl -sSL -A "GNSSTwin-ppt/1.0 (github.com/FlynnDutchman/GNSSTwin)" "https://commons.wikimedia.org/wiki/Special:FilePath/$f?width=1600" -o "shots/foto_$f" || true
