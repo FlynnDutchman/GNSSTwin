@@ -1,0 +1,212 @@
+[
+ {
+  "n": "a01_awal",
+  "t": "Kondisi normal",
+  "ms": 1794743589759
+ },
+ {
+  "n": "a02_chip_acc",
+  "t": "Kondisi normal",
+  "ms": 1794743640114
+ },
+ {
+  "n": "a03_chip_tilt",
+  "t": "Kondisi normal",
+  "ms": 1794743676883
+ },
+ {
+  "n": "a04_chip_gnss",
+  "t": "Kondisi normal",
+  "ms": 1794743710101
+ },
+ {
+  "n": "b01_zoom",
+  "t": "Kondisi normal",
+  "ms": 1794743730267
+ },
+ {
+  "n": "b02_zoom",
+  "t": "Kondisi normal",
+  "ms": 1794743770793
+ },
+ {
+  "n": "b03_zoom",
+  "t": "Kondisi normal",
+  "ms": 1794743821225
+ },
+ {
+  "n": "b04_zoom",
+  "t": "Kondisi normal",
+  "ms": 1794743860332
+ },
+ {
+  "n": "b05_zoom",
+  "t": "Kondisi normal",
+  "ms": 1794743902026
+ },
+ {
+  "n": "b06_zoom",
+  "t": "Kondisi normal",
+  "ms": 1794743946726
+ },
+ {
+  "n": "b07_zoom",
+  "t": "Kondisi normal",
+  "ms": 1794743982663
+ },
+ {
+  "n": "b08_zoom",
+  "t": "Kondisi normal",
+  "ms": 1794744013083
+ },
+ {
+  "n": "b20_rover_tanpa_pin",
+  "t": "Kondisi normal",
+  "ms": 1794744026811
+ },
+ {
+  "n": "b21_rover_samping",
+  "t": "Kondisi normal",
+  "ms": 1794744072681
+ },
+ {
+  "n": "b22_rover_sepanjang",
+  "t": "Kondisi normal",
+  "ms": 1794744114970
+ },
+ {
+  "n": "b23_rover_dekat",
+  "t": "Kondisi normal",
+  "ms": 1794744160894
+ },
+ {
+  "n": "c01_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744234907
+ },
+ {
+  "n": "c02_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744271819
+ },
+ {
+  "n": "c03_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744308469
+ },
+ {
+  "n": "c04_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744329441
+ },
+ {
+  "n": "c05_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744353095
+ },
+ {
+  "n": "c06_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744375595
+ },
+ {
+  "n": "c07_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744390447
+ },
+ {
+  "n": "c08_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744404200
+ },
+ {
+  "n": "c09_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744430122
+ },
+ {
+  "n": "c10_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744448460
+ },
+ {
+  "n": "c11_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744465439
+ },
+ {
+  "n": "c12_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744486039
+ },
+ {
+  "n": "c13_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744509891
+ },
+ {
+  "n": "c14_grafik",
+  "t": "Kondisi normal",
+  "ms": 1794744526595
+ },
+ {
+  "n": "d01_inacors",
+  "t": "Kondisi normal",
+  "ms": 1794744563550
+ },
+ {
+  "n": "d02_lod1",
+  "t": "Kondisi normal",
+  "ms": 1794744601787
+ },
+ {
+  "n": "d03_titik_gempa",
+  "t": "Kondisi normal",
+  "ms": 1794744614691
+ },
+ {
+  "n": "d04_regional",
+  "t": "Kondisi normal",
+  "ms": 1794744655606
+ },
+ {
+  "n": "d05_peta_dasar",
+  "t": "Kondisi normal",
+  "ms": 1794744658168
+ },
+ {
+  "n": "e01_gempa_pilih",
+  "t": "Kondisi normal",
+  "ms": 1794744694818
+ },
+ {
+  "n": "e02_sim",
+  "t": "t +30 dtk dari awal gempa",
+  "ms": 1794744742456
+ },
+ {
+  "n": "e03_sim",
+  "t": "t +57 dtk dari awal gempa",
+  "ms": 1794744769597
+ },
+ {
+  "n": "e04_sim",
+  "t": "t +77 dtk dari awal gempa",
+  "ms": 1794744805234
+ },
+ {
+  "n": "e90_sensor_gempa",
+  "t": "t +77 dtk dari awal gempa",
+  "ms": 1794744850335
+ },
+ {
+  "n": "f01_laporan",
+  "t": "t +77 dtk dari awal gempa",
+  "ms": 1794744868103
+ },
+ {
+  "n": "f02_laporan_proses",
+  "t": "t +77 dtk dari awal gempa",
+  "ms": 1794744924397
+ }
+]
