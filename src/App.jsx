@@ -110,7 +110,7 @@ function Shell({ data: dataAwal }) {
   return (
     <div className="app">
       <nav className="rail" aria-label="Navigasi utama">
-        <Logo />
+        <a href="#/" className="home-link" title="Kembali ke beranda"><Logo /></a>
         <div className="gap" />
         {VIEWS.map(([id, label, icon]) => (
           <button key={id} className={`ri ${view === id ? "on" : ""}`} onClick={() => setView(id)}>
